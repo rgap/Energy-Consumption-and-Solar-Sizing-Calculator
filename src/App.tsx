@@ -30,6 +30,14 @@ function App() {
           <input type="text" className="search-input" placeholder="Buscar equipo..." value={searchQuery} onChange={handleSearchChange} />
         </div>
       </div>
+      <div className="content-wrapper">
+        <aside className="products-filtered">
+          <div className="centered-text">Aqui aparecerán los equipos</div>
+        </aside>
+        <section className="product-list">
+          <div className="centered-text">Aqui aparecerán los equipos agregados y los calculos</div>
+        </section>
+      </div>
     </div>
   );
 }
