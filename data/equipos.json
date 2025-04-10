@@ -1,0 +1,387 @@
+[
+  {
+    "nombre": "Televisor 42\"",
+    "voltaje_entrada": 220,
+    "amperaje": 0.27,
+    "uso_diario_esperado": 4,
+    "potencia": 60
+  },
+  {
+    "nombre": "Cargador de celular",
+    "voltaje_entrada": 220,
+    "amperaje": 0.02,
+    "uso_diario_esperado": 2,
+    "potencia": 5
+  },
+  {
+    "nombre": "Laptop",
+    "voltaje_entrada": 220,
+    "amperaje": 0.2,
+    "uso_diario_esperado": 3,
+    "potencia": 45
+  },
+  {
+    "nombre": "Bombillo LED",
+    "voltaje_entrada": 220,
+    "amperaje": 0.04,
+    "uso_diario_esperado": 5,
+    "potencia": 9
+  },
+  {
+    "nombre": "Refrigeradora",
+    "voltaje_entrada": 220,
+    "amperaje": 0.5,
+    "uso_diario_esperado": 24,
+    "potencia": 110
+  },
+  {
+    "nombre": "Ventilador de pie",
+    "voltaje_entrada": 220,
+    "amperaje": 0.27,
+    "uso_diario_esperado": 6,
+    "potencia": 60
+  },
+  {
+    "nombre": "Microondas",
+    "voltaje_entrada": 220,
+    "amperaje": 4.55,
+    "uso_diario_esperado": 0.5,
+    "potencia": 1000
+  },
+  {
+    "nombre": "Licuadora",
+    "voltaje_entrada": 220,
+    "amperaje": 1.36,
+    "uso_diario_esperado": 0.3,
+    "potencia": 300
+  },
+  {
+    "nombre": "Cafetera eléctrica",
+    "voltaje_entrada": 220,
+    "amperaje": 2.27,
+    "uso_diario_esperado": 0.5,
+    "potencia": 500
+  },
+  {
+    "nombre": "Plancha",
+    "voltaje_entrada": 220,
+    "amperaje": 5,
+    "uso_diario_esperado": 0.5,
+    "potencia": 1100
+  },
+  {
+    "nombre": "Secadora de cabello",
+    "voltaje_entrada": 220,
+    "amperaje": 6.82,
+    "uso_diario_esperado": 0.2,
+    "potencia": 1500
+  },
+  {
+    "nombre": "Lavadora",
+    "voltaje_entrada": 220,
+    "amperaje": 2.27,
+    "uso_diario_esperado": 1,
+    "potencia": 500
+  },
+  {
+    "nombre": "Cargador de herramientas",
+    "voltaje_entrada": 220,
+    "amperaje": 0.23,
+    "uso_diario_esperado": 2,
+    "potencia": 50
+  },
+  {
+    "nombre": "Router WiFi",
+    "voltaje_entrada": 220,
+    "amperaje": 0.05,
+    "uso_diario_esperado": 24,
+    "potencia": 11
+  },
+  {
+    "nombre": "Equipo de sonido",
+    "voltaje_entrada": 220,
+    "amperaje": 0.5,
+    "uso_diario_esperado": 2,
+    "potencia": 110
+  },
+  {
+    "nombre": "Monitor LED",
+    "voltaje_entrada": 220,
+    "amperaje": 0.27,
+    "uso_diario_esperado": 5,
+    "potencia": 60
+  },
+  {
+    "nombre": "PC de escritorio",
+    "voltaje_entrada": 220,
+    "amperaje": 1.36,
+    "uso_diario_esperado": 5,
+    "potencia": 300
+  },
+  {
+    "nombre": "Aspiradora",
+    "voltaje_entrada": 220,
+    "amperaje": 4.09,
+    "uso_diario_esperado": 0.5,
+    "potencia": 900
+  },
+  {
+    "nombre": "Horno eléctrico",
+    "voltaje_entrada": 220,
+    "amperaje": 6.36,
+    "uso_diario_esperado": 1,
+    "potencia": 1400
+  },
+  {
+    "nombre": "Televisor pequeño",
+    "voltaje_entrada": 220,
+    "amperaje": 0.18,
+    "uso_diario_esperado": 4,
+    "potencia": 40
+  },
+  {
+    "nombre": "Cocina eléctrica",
+    "voltaje_entrada": 220,
+    "amperaje": 9.09,
+    "uso_diario_esperado": 2,
+    "potencia": 2000
+  },
+  {
+    "nombre": "Tostadora",
+    "voltaje_entrada": 220,
+    "amperaje": 3.18,
+    "uso_diario_esperado": 0.3,
+    "potencia": 700
+  },
+  {
+    "nombre": "Deshumidificador",
+    "voltaje_entrada": 220,
+    "amperaje": 1.82,
+    "uso_diario_esperado": 5,
+    "potencia": 400
+  },
+  {
+    "nombre": "Ventilador de techo",
+    "voltaje_entrada": 220,
+    "amperaje": 0.23,
+    "uso_diario_esperado": 6,
+    "potencia": 50
+  },
+  {
+    "nombre": "Freidora de aire",
+    "voltaje_entrada": 220,
+    "amperaje": 5,
+    "uso_diario_esperado": 0.5,
+    "potencia": 1100
+  },
+  {
+    "nombre": "Extractor de cocina",
+    "voltaje_entrada": 220,
+    "amperaje": 0.32,
+    "uso_diario_esperado": 1,
+    "potencia": 70
+  },
+  {
+    "nombre": "Dispensador de agua",
+    "voltaje_entrada": 220,
+    "amperaje": 0.5,
+    "uso_diario_esperado": 5,
+    "potencia": 110
+  },
+  {
+    "nombre": "TV Smart 55\"",
+    "voltaje_entrada": 220,
+    "amperaje": 0.32,
+    "uso_diario_esperado": 4,
+    "potencia": 70
+  },
+  {
+    "nombre": "Radiador eléctrico",
+    "voltaje_entrada": 220,
+    "amperaje": 6.36,
+    "uso_diario_esperado": 3,
+    "potencia": 1400
+  },
+  {
+    "nombre": "Cámara de seguridad",
+    "voltaje_entrada": 220,
+    "amperaje": 0.02,
+    "uso_diario_esperado": 24,
+    "potencia": 5
+  },
+  {
+    "nombre": "Humidificador",
+    "voltaje_entrada": 220,
+    "amperaje": 0.23,
+    "uso_diario_esperado": 4,
+    "potencia": 50
+  },
+  {
+    "nombre": "Despertador digital",
+    "voltaje_entrada": 220,
+    "amperaje": 0.005,
+    "uso_diario_esperado": 24,
+    "potencia": 1
+  },
+  {
+    "nombre": "Reproductor de DVD",
+    "voltaje_entrada": 220,
+    "amperaje": 0.09,
+    "uso_diario_esperado": 1,
+    "potencia": 20
+  },
+  {
+    "nombre": "Televisor antiguo CRT",
+    "voltaje_entrada": 220,
+    "amperaje": 0.73,
+    "uso_diario_esperado": 3,
+    "potencia": 160
+  },
+  {
+    "nombre": "Cargador de bicicleta eléctrica",
+    "voltaje_entrada": 220,
+    "amperaje": 0.68,
+    "uso_diario_esperado": 2,
+    "potencia": 150
+  },
+  {
+    "nombre": "Pequeño horno tostador",
+    "voltaje_entrada": 220,
+    "amperaje": 2.27,
+    "uso_diario_esperado": 0.3,
+    "potencia": 500
+  },
+  {
+    "nombre": "Impresora",
+    "voltaje_entrada": 220,
+    "amperaje": 0.23,
+    "uso_diario_esperado": 1,
+    "potencia": 50
+  },
+  {
+    "nombre": "Escáner",
+    "voltaje_entrada": 220,
+    "amperaje": 0.09,
+    "uso_diario_esperado": 0.5,
+    "potencia": 20
+  },
+  {
+    "nombre": "Tetera eléctrica",
+    "voltaje_entrada": 220,
+    "amperaje": 5,
+    "uso_diario_esperado": 0.3,
+    "potencia": 1100
+  },
+  {
+    "nombre": "Foco incandescente",
+    "voltaje_entrada": 220,
+    "amperaje": 0.45,
+    "uso_diario_esperado": 3,
+    "potencia": 100
+  },
+  {
+    "nombre": "Cámara DSLR cargando",
+    "voltaje_entrada": 220,
+    "amperaje": 0.045,
+    "uso_diario_esperado": 1,
+    "potencia": 10
+  },
+  {
+    "nombre": "Timbre eléctrico",
+    "voltaje_entrada": 220,
+    "amperaje": 0.01,
+    "uso_diario_esperado": 0.05,
+    "potencia": 2
+  },
+  {
+    "nombre": "Cargador de afeitadora",
+    "voltaje_entrada": 220,
+    "amperaje": 0.023,
+    "uso_diario_esperado": 0.5,
+    "potencia": 5
+  },
+  {
+    "nombre": "Refrigerador pequeño (frigobar)",
+    "voltaje_entrada": 220,
+    "amperaje": 0.27,
+    "uso_diario_esperado": 24,
+    "potencia": 60
+  },
+  {
+    "nombre": "Cargador de tablet",
+    "voltaje_entrada": 220,
+    "amperaje": 0.05,
+    "uso_diario_esperado": 2,
+    "potencia": 11
+  },
+  {
+    "nombre": "Altavoz Bluetooth",
+    "voltaje_entrada": 220,
+    "amperaje": 0.045,
+    "uso_diario_esperado": 2,
+    "potencia": 10
+  },
+  {
+    "nombre": "Ventilador portátil",
+    "voltaje_entrada": 220,
+    "amperaje": 0.027,
+    "uso_diario_esperado": 4,
+    "potencia": 6
+  },
+  {
+    "nombre": "Batería externa",
+    "voltaje_entrada": 220,
+    "amperaje": 0.045,
+    "uso_diario_esperado": 1,
+    "potencia": 10
+  },
+  {
+    "nombre": "Radio portátil",
+    "voltaje_entrada": 220,
+    "amperaje": 0.014,
+    "uso_diario_esperado": 3,
+    "potencia": 3
+  },
+  {
+    "nombre": "Moem/Router WiFi",
+    "voltaje_entrada": 220,
+    "amperaje": 0.05,
+    "uso_diario_esperado": 24,
+    "potencia": 11
+  },
+  {
+    "nombre": "Impresora láser",
+    "voltaje_entrada": 220,
+    "amperaje": 0.91,
+    "uso_diario_esperado": 1,
+    "potencia": 200
+  },
+  {
+    "nombre": "Terma Eléctrica",
+    "voltaje_entrada": 220,
+    "amperaje": 9.09,
+    "uso_diario_esperado": 1,
+    "potencia": 2000
+  },
+  {
+    "nombre": "Aire acondicionado",
+    "voltaje_entrada": 220,
+    "amperaje": 10.45,
+    "uso_diario_esperado": 5,
+    "potencia": 2300
+  },
+  {
+    "nombre": "Lámpara fluorescente",
+    "voltaje_entrada": 220,
+    "amperaje": 0.09,
+    "uso_diario_esperado": 6,
+    "potencia": 20
+  },
+  {
+    "nombre": "Consola de videojuegos",
+    "voltaje_entrada": 220,
+    "amperaje": 0.23,
+    "uso_diario_esperado": 3,
+    "potencia": 50
+  }
+]
