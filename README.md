@@ -1,54 +1,77 @@
-# React + TypeScript + Vite
+# Energy Consumption Calculator with React + TypeScript
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![React](https://img.shields.io/badge/React-19-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)
+![ESLint](https://img.shields.io/badge/ESLint-configured-purple)
+![JSON](https://img.shields.io/badge/Data-equipos.json-orange)
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project is a simple **energy consumption calculator** built with **React 19** and **TypeScript**. It should help estimate daily energy use of common household appliances. The UI includes a live search bar and a filtered list of appliances with basic information like voltage, amperage, and usage time.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+✅ Searchable list of household appliances  
+✅ Equipment specs loaded dynamically from a local JSON file  
+✅ Clean and responsive UI using basic CSS  
+✅ ESLint configured for consistent code quality  
+✅ Organized TypeScript configuration for app and tooling
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Wireframes
+
+Low-fidelity wireframes are included in the `@low_fidelity_wireframes/` folder to provide visual guidance for UI structure and layout ideas.
+
+```
+📁 @low_fidelity_wireframes/
+├── 1.png
+├── 2.png
+└── 3.png
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+These will be used as a base for improving the UI or building a higher-fidelity design.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Tech Stack
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+- **React 19** – For building the user interface
+- **TypeScript** – Type-safe development
+- **JSON** – Local data source for devices
+- **Vite** – Development server and bundler (used internally, minimal config)
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/calculo-energia-app.git
+cd calculo-energia-app
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install  # or yarn install
+```
+
+### 3. Run the App Locally
+
+```bash
+npm run dev  # or yarn dev
+```
+
+Visit `http://localhost:5173` in your browser.
+
+## Scripts
+
+- `dev` – Start local dev server
+- `build` – Type check and build the project
+- `lint` – Run ESLint across the project
+- `preview` – Preview production build locally
+
+## Folder Structure
+
+```
+├── data/                      # Contains equipos.json with appliance data
+├── src/                       # React components, styles, and entry point
+├── public/                    # Static files like logos or screenshots
+├── @low_fidelity_wireframes/  # PNG wireframes for visual reference
 ```
