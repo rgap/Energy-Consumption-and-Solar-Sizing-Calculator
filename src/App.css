@@ -144,6 +144,33 @@ body {
   border-radius: 8px;
   padding: 16px;
   min-height: 400px;
+  transition: background-color 0.2s;
+}
+
+.product-list.drag-over {
+  background-color: #e2e8f0;
+}
+
+.selected-equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  width: 100%;
+  padding: 8px;
+}
+
+.selected-equipment-item {
+  background-color: white;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: move;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.selected-equipment-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .equipment-list {
@@ -157,8 +184,9 @@ body {
 .equipment-item {
   padding: 12px;
   border-bottom: 1px solid #e1e1e1;
-  cursor: pointer;
+  cursor: move;
   transition: background-color 0.2s;
+  user-select: none;
 }
 
 .equipment-item:hover {

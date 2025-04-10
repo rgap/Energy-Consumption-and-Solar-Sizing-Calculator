@@ -15,6 +15,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [equipos, setEquipos] = useState<Equipo[]>([]);
   const [filteredEquipos, setFilteredEquipos] = useState<Equipo[]>([]);
+  const [selectedEquipos, setSelectedEquipos] = useState<Equipo[]>([]);
 
   useEffect(() => {
     // Load equipos data when component mounts
@@ -40,6 +41,33 @@ function App() {
     setFilteredEquipos(filtered);
   };
 
+  const handleDragStart = (event: React.DragEvent, equipo: Equipo) => {
+    event.dataTransfer.setData('application/json', JSON.stringify(equipo));
+  };
+
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.currentTarget.classList.add('drag-over');
+  };
+
+  const handleDragLeave = (event: React.DragEvent) => {
+    event.currentTarget.classList.remove('drag-over');
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.currentTarget.classList.remove('drag-over');
+    
+    try {
+      const equipo = JSON.parse(event.dataTransfer.getData('application/json'));
+      if (!selectedEquipos.some(e => e.nombre === equipo.nombre)) {
+        setSelectedEquipos([...selectedEquipos, equipo]);
+      }
+    } catch (error) {
+      console.error('Error adding equipment:', error);
+    }
+  };
+
   return (
     <div className="app-container">
       <header className="header">
@@ -61,7 +89,7 @@ function App() {
           {filteredEquipos.length > 0 ? (
             <ul className="equipment-list">
               {filteredEquipos.map((equipo, index) => (
-                <li key={index} className="equipment-item">
+                <li key={index} className="equipment-item" draggable onDragStart={(e) => handleDragStart(e, equipo)}>
                   <div className="equipment-details">
                     <div className="equipment-name">{equipo.nombre}</div>
                     <div className="equipment-specs">
@@ -76,8 +104,22 @@ function App() {
             <div className="centered-text">No se encontraron equipos</div>
           )}
         </aside>
-        <section className="product-list">
-          <div className="centered-text">Aqui aparecerán los equipos agregados y los calculos</div>
+        <section className="product-list" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+          {selectedEquipos.length > 0 ? (
+            <div className="selected-equipment-grid">
+              {selectedEquipos.map((equipo, index) => (
+                <div key={index} className="selected-equipment-item">
+                  <div className="equipment-details">
+                    <div className="equipment-name">{equipo.nombre}</div>
+                    <div className="equipment-specs">{equipo.voltaje_entrada}V, {equipo.amperaje}A</div>
+                    <div className="equipment-usage">{equipo.uso_diario_esperado}h/dia</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="centered-text">Arrastra equipos aquí para agregarlos</div>
+          )}
         </section>
       </div>
     </div>
