@@ -27,13 +27,7 @@ function App() {
       <div className="search-section">
         <div className="search-container">
           <FiSearch className="search-icon" />
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Buscar equipo..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
+          <input type="text" className="search-input" placeholder="Buscar equipo..." value={searchQuery} onChange={handleSearchChange} />
         </div>
       </div>
     </div>
