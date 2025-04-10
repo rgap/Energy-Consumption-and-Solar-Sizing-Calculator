@@ -59,9 +59,15 @@ function App() {
     event.currentTarget.classList.remove("drag-over");
 
     try {
-      const equipo = JSON.parse(event.dataTransfer.getData("application/json"));
-      if (!selectedEquipos.some(e => e.nombre === equipo.nombre)) {
-        setSelectedEquipos([equipo, ...selectedEquipos]); // Add new item at the start
+      const draggedData = event.dataTransfer.getData("application/json");
+      if (!draggedData) return;
+
+      const data = JSON.parse(draggedData);
+      // Only process items from the sidebar, not reordering
+      if (!data.type && data.nombre) {
+        if (!selectedEquipos.some(e => e.nombre === data.nombre)) {
+          setSelectedEquipos([data, ...selectedEquipos]);
+        }
       }
     } catch (error) {
       console.error("Error adding equipment:", error);
@@ -70,6 +76,57 @@ function App() {
 
   const handleRemoveEquipo = (equipoToRemove: Equipo) => {
     setSelectedEquipos(selectedEquipos.filter(equipo => equipo.nombre !== equipoToRemove.nombre));
+  };
+
+  const handleSelectedItemDragStart = (event: React.DragEvent, index: number) => {
+    event.dataTransfer.setData("application/json", JSON.stringify({ type: "reorder", index, equipo: selectedEquipos[index] }));
+  };
+
+  const handleSelectedItemDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    // Just add visual feedback, don't try to access dataTransfer data here
+    const target = event.currentTarget as HTMLElement;
+    if (!target.classList.contains("drag-over")) {
+      const items = Array.from(document.getElementsByClassName("selected-equipment-item"));
+      items.forEach(item => item.classList.remove("drag-over"));
+      target.classList.add("drag-over");
+    }
+  };
+
+  const handleSelectedItemDrop = (event: React.DragEvent, dropIndex: number) => {
+    event.preventDefault();
+
+    try {
+      const draggedData = event.dataTransfer.getData("application/json");
+      if (!draggedData) return;
+
+      const data = JSON.parse(draggedData);
+
+      if (data.type === "reorder") {
+        // Reordering within selected items
+        const dragIndex = data.index;
+        if (dragIndex === dropIndex) return; // Don't reorder if dropped in same position
+
+        const newItems = [...selectedEquipos];
+        const [removed] = newItems.splice(dragIndex, 1);
+        newItems.splice(dropIndex, 0, removed);
+        setSelectedEquipos(newItems);
+      } else if (!data.type && data.nombre) {
+        // Check if it's an equipment item
+        // Adding new item from the sidebar
+        if (!selectedEquipos.some(e => e.nombre === data.nombre)) {
+          const newItems = [...selectedEquipos];
+          newItems.splice(dropIndex, 0, data);
+          setSelectedEquipos(newItems);
+        }
+      }
+
+      // Remove drag-over class from all items
+      const items = Array.from(document.getElementsByClassName("selected-equipment-item"));
+      items.forEach(item => item.classList.remove("drag-over"));
+    } catch (error) {
+      console.error("Error in drop operation:", error);
+    }
   };
 
   return (
@@ -112,12 +169,18 @@ function App() {
           {selectedEquipos.length > 0 ? (
             <div className="selected-equipment-grid">
               {selectedEquipos.map((equipo, index) => (
-                <div key={index} className="selected-equipment-item">
-                  <button 
-                    className="remove-button"
-                    onClick={() => handleRemoveEquipo(equipo)}
-                    title="Eliminar"
-                  >
+                <div
+                  key={index}
+                  className="selected-equipment-item"
+                  draggable
+                  onDragStart={e => handleSelectedItemDragStart(e, index)}
+                  onDragOver={handleSelectedItemDragOver}
+                  onDrop={e => handleSelectedItemDrop(e, index)}
+                  onDragLeave={e => {
+                    e.currentTarget.classList.remove("drag-over");
+                  }}
+                >
+                  <button className="remove-button" onClick={() => handleRemoveEquipo(equipo)} title="Eliminar">
                     ×
                   </button>
                   <div className="equipment-details">
