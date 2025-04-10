@@ -42,30 +42,34 @@ function App() {
   };
 
   const handleDragStart = (event: React.DragEvent, equipo: Equipo) => {
-    event.dataTransfer.setData('application/json', JSON.stringify(equipo));
+    event.dataTransfer.setData("application/json", JSON.stringify(equipo));
   };
 
   const handleDragOver = (event: React.DragEvent) => {
     event.preventDefault();
-    event.currentTarget.classList.add('drag-over');
+    event.currentTarget.classList.add("drag-over");
   };
 
   const handleDragLeave = (event: React.DragEvent) => {
-    event.currentTarget.classList.remove('drag-over');
+    event.currentTarget.classList.remove("drag-over");
   };
 
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
-    event.currentTarget.classList.remove('drag-over');
-    
+    event.currentTarget.classList.remove("drag-over");
+
     try {
-      const equipo = JSON.parse(event.dataTransfer.getData('application/json'));
+      const equipo = JSON.parse(event.dataTransfer.getData("application/json"));
       if (!selectedEquipos.some(e => e.nombre === equipo.nombre)) {
-        setSelectedEquipos([...selectedEquipos, equipo]);
+        setSelectedEquipos([equipo, ...selectedEquipos]); // Add new item at the start
       }
     } catch (error) {
-      console.error('Error adding equipment:', error);
+      console.error("Error adding equipment:", error);
     }
+  };
+
+  const handleRemoveEquipo = (equipoToRemove: Equipo) => {
+    setSelectedEquipos(selectedEquipos.filter(equipo => equipo.nombre !== equipoToRemove.nombre));
   };
 
   return (
@@ -89,7 +93,7 @@ function App() {
           {filteredEquipos.length > 0 ? (
             <ul className="equipment-list">
               {filteredEquipos.map((equipo, index) => (
-                <li key={index} className="equipment-item" draggable onDragStart={(e) => handleDragStart(e, equipo)}>
+                <li key={index} className="equipment-item" draggable onDragStart={e => handleDragStart(e, equipo)}>
                   <div className="equipment-details">
                     <div className="equipment-name">{equipo.nombre}</div>
                     <div className="equipment-specs">
@@ -109,9 +113,18 @@ function App() {
             <div className="selected-equipment-grid">
               {selectedEquipos.map((equipo, index) => (
                 <div key={index} className="selected-equipment-item">
+                  <button 
+                    className="remove-button"
+                    onClick={() => handleRemoveEquipo(equipo)}
+                    title="Eliminar"
+                  >
+                    ×
+                  </button>
                   <div className="equipment-details">
                     <div className="equipment-name">{equipo.nombre}</div>
-                    <div className="equipment-specs">{equipo.voltaje_entrada}V, {equipo.amperaje}A</div>
+                    <div className="equipment-specs">
+                      {equipo.voltaje_entrada}V, {equipo.amperaje}A
+                    </div>
                     <div className="equipment-usage">{equipo.uso_diario_esperado}h/dia</div>
                   </div>
                 </div>

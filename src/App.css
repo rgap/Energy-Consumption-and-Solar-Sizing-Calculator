@@ -166,11 +166,44 @@ body {
   padding: 12px;
   cursor: move;
   transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .selected-equipment-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.remove-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #666;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.remove-button:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: rgb(239, 68, 68);
+}
+
+.selected-equipment-item .equipment-details {
+  text-align: center;
+  padding-top: 12px;
 }
 
 .equipment-list {
