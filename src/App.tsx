@@ -63,12 +63,12 @@ function App() {
 
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
-    event.currentTarget.classList.remove('drag-over');
-    
+    event.currentTarget.classList.remove("drag-over");
+
     try {
-      const draggedData = event.dataTransfer.getData('application/json');
+      const draggedData = event.dataTransfer.getData("application/json");
       if (!draggedData) return;
-      
+
       const data = JSON.parse(draggedData);
       // Only process items from the sidebar, not reordering
       if (!data.type && data.nombre) {
@@ -78,24 +78,24 @@ function App() {
             cantidad: 1,
             horas: 1,
             editedAmperaje: data.amperaje,
-            editedPotencia: data.potencia
+            editedPotencia: data.potencia,
           };
 
           // Get the drop position relative to the grid
-          const gridElement = event.currentTarget.querySelector('.selected-equipment-grid');
+          const gridElement = event.currentTarget.querySelector(".selected-equipment-grid");
           if (gridElement) {
             const rect = gridElement.getBoundingClientRect();
             const items = Array.from(gridElement.children);
             const itemWidth = items.length > 0 ? items[0].getBoundingClientRect().width : 0;
             const itemsPerRow = Math.floor(rect.width / (itemWidth + 16)); // 16px is the gap
-            
+
             // Calculate drop position
             const relativeX = event.clientX - rect.left;
             const relativeY = event.clientY - rect.top;
             const col = Math.floor(relativeX / (itemWidth + 16));
             const row = Math.floor(relativeY / (itemWidth + 16));
             const targetIndex = Math.min(row * itemsPerRow + col, selectedEquipos.length);
-            
+
             // Insert at calculated position
             const newItems = [...selectedEquipos];
             newItems.splice(targetIndex, 0, selectedEquipo);
@@ -107,7 +107,7 @@ function App() {
         }
       }
     } catch (error) {
-      console.error('Error adding equipment:', error);
+      console.error("Error adding equipment:", error);
     }
   };
 
@@ -214,76 +214,89 @@ function App() {
             <div className="centered-text">No se encontraron equipos</div>
           )}
         </aside>
-        <section className="product-list" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-          {selectedEquipos.length > 0 ? (
-            <div className="selected-equipment-grid">
-              {selectedEquipos.map((equipo, index) => (
-                <div
-                  key={index}
-                  className="selected-equipment-item"
-                  draggable
-                  onDragStart={e => handleSelectedItemDragStart(e, index)}
-                  onDragOver={handleSelectedItemDragOver}
-                  onDrop={e => handleSelectedItemDrop(e, index)}
-                  onDragLeave={e => {
-                    e.currentTarget.classList.remove("drag-over");
-                  }}
-                >
-                  <button className="remove-button" onClick={() => handleRemoveEquipo(equipo)} title="Eliminar">
-                    ×
-                  </button>
-                  <div className="equipment-details">
-                    <div className="equipment-name">{equipo.nombre}</div>
-                    <div className="input-group">
-                      <label>Potencia</label>
-                      <div className="input-field-container">
-                        <input
-                          type="number"
-                          value={equipo.editedPotencia}
-                          onChange={e => handleFieldChange(index, "editedPotencia", e.target.value)}
-                        />
-                        <span>W</span>
+
+        <div className="right-panel">
+          <div className="list-container">
+            <section className="product-list" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+              {selectedEquipos.length > 0 ? (
+                <div className="selected-equipment-grid">
+                  {selectedEquipos.map((equipo, index) => (
+                    <div
+                      key={index}
+                      className="selected-equipment-item"
+                      draggable
+                      onDragStart={e => handleSelectedItemDragStart(e, index)}
+                      onDragOver={handleSelectedItemDragOver}
+                      onDrop={e => handleSelectedItemDrop(e, index)}
+                      onDragLeave={e => {
+                        e.currentTarget.classList.remove("drag-over");
+                      }}
+                    >
+                      <button className="remove-button" onClick={() => handleRemoveEquipo(equipo)} title="Eliminar">
+                        ×
+                      </button>
+                      <div className="equipment-details">
+                        <div className="equipment-name">{equipo.nombre}</div>
+                        <div className="input-group">
+                          <label>Potencia</label>
+                          <div className="input-field-container">
+                            <input
+                              type="number"
+                              value={equipo.editedPotencia}
+                              onChange={e => handleFieldChange(index, "editedPotencia", e.target.value)}
+                            />
+                            <span>W</span>
+                          </div>
+                        </div>
+                        <div className="input-group">
+                          <label>Amperaje</label>
+                          <div className="input-field-container">
+                            <input
+                              type="number"
+                              value={equipo.editedAmperaje}
+                              onChange={e => handleFieldChange(index, "editedAmperaje", e.target.value)}
+                            />
+                            <span>A</span>
+                          </div>
+                        </div>
+                        <div className="input-group">
+                          <label>Cantidad</label>
+                          <div className="input-field-container">
+                            <input
+                              type="number"
+                              value={equipo.cantidad}
+                              onChange={e => handleFieldChange(index, "cantidad", e.target.value)}
+                              min="1"
+                            />
+                            <span></span>
+                          </div>
+                        </div>
+                        <div className="input-group">
+                          <label>Horas al día</label>
+                          <div className="input-field-container">
+                            <input
+                              type="number"
+                              value={equipo.horas}
+                              onChange={e => handleFieldChange(index, "horas", e.target.value)}
+                              min="0"
+                              max="24"
+                            />
+                            <span></span>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="input-group">
-                      <label>Amperaje</label>
-                      <div className="input-field-container">
-                        <input
-                          type="number"
-                          value={equipo.editedAmperaje}
-                          onChange={e => handleFieldChange(index, "editedAmperaje", e.target.value)}
-                        />
-                        <span>A</span>
-                      </div>
-                    </div>
-                    <div className="input-group">
-                      <label>Cantidad</label>
-                      <div className="input-field-container">
-                        <input type="number" value={equipo.cantidad} onChange={e => handleFieldChange(index, "cantidad", e.target.value)} min="1" />
-                        <span></span>
-                      </div>
-                    </div>
-                    <div className="input-group">
-                      <label>Horas al día</label>
-                      <div className="input-field-container">
-                        <input
-                          type="number"
-                          value={equipo.horas}
-                          onChange={e => handleFieldChange(index, "horas", e.target.value)}
-                          min="0"
-                          max="24"
-                        />
-                        <span></span>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="centered-text">Arrastra equipos aquí para agregarlos</div>
-          )}
-        </section>
+              ) : (
+                <div className="centered-text">Arrastra equipos aquí para agregarlos</div>
+              )}
+            </section>
+          </div>
+          <section className="calculations-section">
+            <div className="centered-text">Aquí irán los cálculos</div>
+          </section>
+        </div>
       </div>
     </div>
   );
