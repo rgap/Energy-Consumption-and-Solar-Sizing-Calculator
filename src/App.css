@@ -167,7 +167,7 @@ body {
   cursor: move;
   transition: transform 0.2s, box-shadow 0.2s;
   position: relative;
-  min-width: 220px;
+  min-width: 210px;
 }
 
 .selected-equipment-item:hover {
