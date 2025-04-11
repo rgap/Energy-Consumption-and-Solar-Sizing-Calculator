@@ -78,7 +78,7 @@ function App() {
             cantidad: 1,
             horas: 1,
             editedAmperaje: data.amperaje,
-            editedPotencia: data.potencia
+            editedPotencia: data.potencia,
           };
           setSelectedEquipos([selectedEquipo, ...selectedEquipos]);
         }
@@ -143,17 +143,13 @@ function App() {
     }
   };
 
-  const handleFieldChange = (
-    index: number,
-    field: 'editedPotencia' | 'editedAmperaje' | 'cantidad' | 'horas',
-    value: string
-  ) => {
+  const handleFieldChange = (index: number, field: "editedPotencia" | "editedAmperaje" | "cantidad" | "horas", value: string) => {
     const newValue = parseFloat(value) || 0;
     setSelectedEquipos(prevEquipos => {
       const newEquipos = [...prevEquipos];
       newEquipos[index] = {
         ...newEquipos[index],
-        [field]: newValue
+        [field]: newValue,
       };
       return newEquipos;
     });
@@ -217,40 +213,45 @@ function App() {
                     <div className="equipment-name">{equipo.nombre}</div>
                     <div className="input-group">
                       <label>Potencia</label>
-                      <input
-                        type="number"
-                        value={equipo.editedPotencia}
-                        onChange={(e) => handleFieldChange(index, 'editedPotencia', e.target.value)}
-                      />
-                      <span>W</span>
+                      <div className="input-field-container">
+                        <input
+                          type="number"
+                          value={equipo.editedPotencia}
+                          onChange={e => handleFieldChange(index, "editedPotencia", e.target.value)}
+                        />
+                        <span>W</span>
+                      </div>
                     </div>
                     <div className="input-group">
                       <label>Amperaje</label>
-                      <input
-                        type="number"
-                        value={equipo.editedAmperaje}
-                        onChange={(e) => handleFieldChange(index, 'editedAmperaje', e.target.value)}
-                      />
-                      <span>A</span>
+                      <div className="input-field-container">
+                        <input
+                          type="number"
+                          value={equipo.editedAmperaje}
+                          onChange={e => handleFieldChange(index, "editedAmperaje", e.target.value)}
+                        />
+                        <span>A</span>
+                      </div>
                     </div>
                     <div className="input-group">
                       <label>Cantidad</label>
-                      <input
-                        type="number"
-                        value={equipo.cantidad}
-                        onChange={(e) => handleFieldChange(index, 'cantidad', e.target.value)}
-                        min="1"
-                      />
+                      <div className="input-field-container">
+                        <input type="number" value={equipo.cantidad} onChange={e => handleFieldChange(index, "cantidad", e.target.value)} min="1" />
+                        <span></span>
+                      </div>
                     </div>
                     <div className="input-group">
                       <label>Horas al día</label>
-                      <input
-                        type="number"
-                        value={equipo.horas}
-                        onChange={(e) => handleFieldChange(index, 'horas', e.target.value)}
-                        min="0"
-                        max="24"
-                      />
+                      <div className="input-field-container">
+                        <input
+                          type="number"
+                          value={equipo.horas}
+                          onChange={e => handleFieldChange(index, "horas", e.target.value)}
+                          min="0"
+                          max="24"
+                        />
+                        <span></span>
+                      </div>
                     </div>
                   </div>
                 </div>
