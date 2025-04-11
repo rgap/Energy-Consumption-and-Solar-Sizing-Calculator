@@ -10,12 +10,19 @@ interface Equipo {
   potencia: number;
 }
 
+interface SelectedEquipo extends Equipo {
+  cantidad: number;
+  horas: number;
+  editedAmperaje: number;
+  editedPotencia: number;
+}
+
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [equipos, setEquipos] = useState<Equipo[]>([]);
   const [filteredEquipos, setFilteredEquipos] = useState<Equipo[]>([]);
-  const [selectedEquipos, setSelectedEquipos] = useState<Equipo[]>([]);
+  const [selectedEquipos, setSelectedEquipos] = useState<SelectedEquipo[]>([]);
 
   useEffect(() => {
     // Load equipos data when component mounts
@@ -66,7 +73,14 @@ function App() {
       // Only process items from the sidebar, not reordering
       if (!data.type && data.nombre) {
         if (!selectedEquipos.some(e => e.nombre === data.nombre)) {
-          setSelectedEquipos([data, ...selectedEquipos]);
+          const selectedEquipo: SelectedEquipo = {
+            ...data,
+            cantidad: 1,
+            horas: 1,
+            editedAmperaje: data.amperaje,
+            editedPotencia: data.potencia
+          };
+          setSelectedEquipos([selectedEquipo, ...selectedEquipos]);
         }
       }
     } catch (error) {
@@ -129,6 +143,22 @@ function App() {
     }
   };
 
+  const handleFieldChange = (
+    index: number,
+    field: 'editedPotencia' | 'editedAmperaje' | 'cantidad' | 'horas',
+    value: string
+  ) => {
+    const newValue = parseFloat(value) || 0;
+    setSelectedEquipos(prevEquipos => {
+      const newEquipos = [...prevEquipos];
+      newEquipos[index] = {
+        ...newEquipos[index],
+        [field]: newValue
+      };
+      return newEquipos;
+    });
+  };
+
   return (
     <div className="app-container">
       <header className="header">
@@ -185,10 +215,43 @@ function App() {
                   </button>
                   <div className="equipment-details">
                     <div className="equipment-name">{equipo.nombre}</div>
-                    <div className="equipment-specs">
-                      {equipo.voltaje_entrada}V, {equipo.amperaje}A
+                    <div className="input-group">
+                      <label>Potencia</label>
+                      <input
+                        type="number"
+                        value={equipo.editedPotencia}
+                        onChange={(e) => handleFieldChange(index, 'editedPotencia', e.target.value)}
+                      />
+                      <span>W</span>
                     </div>
-                    <div className="equipment-usage">{equipo.uso_diario_esperado}h/dia</div>
+                    <div className="input-group">
+                      <label>Amperaje</label>
+                      <input
+                        type="number"
+                        value={equipo.editedAmperaje}
+                        onChange={(e) => handleFieldChange(index, 'editedAmperaje', e.target.value)}
+                      />
+                      <span>A</span>
+                    </div>
+                    <div className="input-group">
+                      <label>Cantidad</label>
+                      <input
+                        type="number"
+                        value={equipo.cantidad}
+                        onChange={(e) => handleFieldChange(index, 'cantidad', e.target.value)}
+                        min="1"
+                      />
+                    </div>
+                    <div className="input-group">
+                      <label>Horas al día</label>
+                      <input
+                        type="number"
+                        value={equipo.horas}
+                        onChange={(e) => handleFieldChange(index, 'horas', e.target.value)}
+                        min="0"
+                        max="24"
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
