@@ -23,6 +23,12 @@ function App() {
   const [equipos, setEquipos] = useState<Equipo[]>([]);
   const [filteredEquipos, setFilteredEquipos] = useState<Equipo[]>([]);
   const [selectedEquipos, setSelectedEquipos] = useState<SelectedEquipo[]>([]);
+  const [calcConfig, setCalcConfig] = useState({
+    factorSeguridad: 1.0,
+    eficaciaInversor: 0.9,
+    horasSolPico: 5.0,
+    diasAutonomia: 3,
+  });
 
   useEffect(() => {
     // Load equipos data when component mounts
@@ -61,9 +67,15 @@ function App() {
     event.currentTarget.classList.remove("drag-over");
   };
 
+  const cleanupDragOverClasses = () => {
+    const items = Array.from(document.getElementsByClassName("selected-equipment-item"));
+    items.forEach(item => item.classList.remove("drag-over"));
+  };
+
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     event.currentTarget.classList.remove("drag-over");
+    cleanupDragOverClasses();
 
     try {
       const draggedData = event.dataTransfer.getData("application/json");
@@ -121,17 +133,14 @@ function App() {
 
   const handleSelectedItemDragOver = (event: React.DragEvent) => {
     event.preventDefault();
-    // Just add visual feedback, don't try to access dataTransfer data here
+    cleanupDragOverClasses();
     const target = event.currentTarget as HTMLElement;
-    if (!target.classList.contains("drag-over")) {
-      const items = Array.from(document.getElementsByClassName("selected-equipment-item"));
-      items.forEach(item => item.classList.remove("drag-over"));
-      target.classList.add("drag-over");
-    }
+    target.classList.add("drag-over");
   };
 
   const handleSelectedItemDrop = (event: React.DragEvent, dropIndex: number) => {
     event.preventDefault();
+    cleanupDragOverClasses();
 
     try {
       const draggedData = event.dataTransfer.getData("application/json");
@@ -176,6 +185,14 @@ function App() {
       };
       return newEquipos;
     });
+  };
+
+  const handleConfigChange = (field: string, value: string) => {
+    const newValue = parseFloat(value) || 0;
+    setCalcConfig(prevConfig => ({
+      ...prevConfig,
+      [field]: newValue,
+    }));
   };
 
   return (
@@ -224,14 +241,15 @@ function App() {
                     <div
                       key={index}
                       className="selected-equipment-item"
-                      draggable
-                      onDragStart={e => handleSelectedItemDragStart(e, index)}
                       onDragOver={handleSelectedItemDragOver}
                       onDrop={e => handleSelectedItemDrop(e, index)}
                       onDragLeave={e => {
                         e.currentTarget.classList.remove("drag-over");
                       }}
                     >
+                      <button className="drag-handle" draggable onDragStart={e => handleSelectedItemDragStart(e, index)} title="Arrastrar">
+                        ⋮⋮
+                      </button>
                       <button className="remove-button" onClick={() => handleRemoveEquipo(equipo)} title="Eliminar">
                         ×
                       </button>
@@ -241,9 +259,9 @@ function App() {
                           <label>Potencia</label>
                           <div className="input-field-container">
                             <input
-                              type="number"
                               value={equipo.editedPotencia}
                               onChange={e => handleFieldChange(index, "editedPotencia", e.target.value)}
+                              onClick={e => e.currentTarget.select()}
                             />
                             <span>W</span>
                           </div>
@@ -252,9 +270,9 @@ function App() {
                           <label>Amperaje</label>
                           <div className="input-field-container">
                             <input
-                              type="number"
                               value={equipo.editedAmperaje}
                               onChange={e => handleFieldChange(index, "editedAmperaje", e.target.value)}
+                              onClick={e => e.currentTarget.select()}
                             />
                             <span>A</span>
                           </div>
@@ -263,9 +281,9 @@ function App() {
                           <label>Cantidad</label>
                           <div className="input-field-container">
                             <input
-                              type="number"
                               value={equipo.cantidad}
                               onChange={e => handleFieldChange(index, "cantidad", e.target.value)}
+                              onClick={e => e.currentTarget.select()}
                               min="1"
                             />
                             <span></span>
@@ -275,9 +293,9 @@ function App() {
                           <label>Horas al día</label>
                           <div className="input-field-container">
                             <input
-                              type="number"
                               value={equipo.horas}
                               onChange={e => handleFieldChange(index, "horas", e.target.value)}
+                              onClick={e => e.currentTarget.select()}
                               min="0"
                               max="24"
                             />
@@ -294,7 +312,55 @@ function App() {
             </section>
           </div>
           <section className="calculations-section">
-            <div className="centered-text">Aquí irán los cálculos</div>
+            {selectedEquipos.length > 0 ? (
+              <div className="calculations-container">
+                <div className="config-section">
+                  <div className="config-group">
+                    <label>Factor de Seguridad (FS)</label>
+                    <input
+                      value={calcConfig.factorSeguridad}
+                      onChange={e => handleConfigChange("factorSeguridad", e.target.value)}
+                      onClick={e => e.currentTarget.select()}
+                      min="1"
+                      step="0.1"
+                    />
+                  </div>
+                  <div className="config-group">
+                    <label>Eficacia del Inversor</label>
+                    <input
+                      value={calcConfig.eficaciaInversor}
+                      onChange={e => handleConfigChange("eficaciaInversor", e.target.value)}
+                      onClick={e => e.currentTarget.select()}
+                      min="0"
+                      max="1"
+                      step="0.1"
+                    />
+                  </div>
+                  <div className="config-group">
+                    <label>Horas Sol Pico (HSP)</label>
+                    <input
+                      value={calcConfig.horasSolPico}
+                      onChange={e => handleConfigChange("horasSolPico", e.target.value)}
+                      onClick={e => e.currentTarget.select()}
+                      min="0"
+                      step="0.5"
+                    />
+                  </div>
+                  <div className="config-group">
+                    <label>#Dias de Autonomía</label>
+                    <input
+                      value={calcConfig.diasAutonomia}
+                      onChange={e => handleConfigChange("diasAutonomia", e.target.value)}
+                      onClick={e => e.currentTarget.select()}
+                      min="1"
+                      step="1"
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="centered-text">Aquí irán los cálculos</div>
+            )}
           </section>
         </div>
       </div>
