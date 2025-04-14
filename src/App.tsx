@@ -24,9 +24,9 @@ function App() {
   const [filteredEquipos, setFilteredEquipos] = useState<Equipo[]>([]);
   const [selectedEquipos, setSelectedEquipos] = useState<SelectedEquipo[]>([]);
   const [calcConfig, setCalcConfig] = useState({
-    factorSeguridad: 1.0,
-    eficaciaInversor: 0.9,
-    horasSolPico: 5.0,
+    factorSeguridad: 1.2,
+    eficaciaInversor: 0.87,
+    horasSolPico: 5.27,
     diasAutonomia: 3,
   });
 
@@ -266,7 +266,7 @@ function App() {
                             <span>W</span>
                           </div>
                         </div>
-                        <div className="input-group">
+                        {/* <div className="input-group">
                           <label>Amperaje</label>
                           <div className="input-field-container">
                             <input
@@ -276,7 +276,7 @@ function App() {
                             />
                             <span>A</span>
                           </div>
-                        </div>
+                        </div> */}
                         <div className="input-group">
                           <label>Cantidad</label>
                           <div className="input-field-container">
@@ -314,6 +314,44 @@ function App() {
           <section className="calculations-section">
             {selectedEquipos.length > 0 ? (
               <div className="calculations-container">
+                <div className="calculations-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Equipo</th>
+                        <th>Potencia (W)</th>
+                        <th>Cantidad</th>
+                        <th>Potencia Total</th>
+                        <th>Horas al día (h)</th>
+                        <th>Energía (Wh)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedEquipos.map((equipo, index) => {
+                        const potenciaTotal = equipo.editedPotencia * equipo.cantidad;
+                        const energia = potenciaTotal * equipo.horas;
+                        return (
+                          <tr key={index}>
+                            <td>{equipo.nombre}</td>
+                            <td>{equipo.editedPotencia.toFixed(0)}</td>
+                            <td>{equipo.cantidad}</td>
+                            <td>{potenciaTotal.toFixed(0)}</td>
+                            <td>{equipo.horas}</td>
+                            <td>{energia.toFixed(0)}</td>
+                          </tr>
+                        );
+                      })}
+                      <tr className="totals-row">
+                        <td></td>
+                        <td></td>
+                        <td>Potencia Total (Máxima)</td>
+                        <td>{selectedEquipos.reduce((sum, equipo) => sum + equipo.editedPotencia * equipo.cantidad, 0).toFixed(0)}</td>
+                        <td>Energía Consumida Diaria (Máxima)</td>
+                        <td>{selectedEquipos.reduce((sum, equipo) => sum + equipo.editedPotencia * equipo.cantidad * equipo.horas, 0).toFixed(0)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
                 <div className="config-section">
                   <div className="config-group">
                     <label>Factor de Seguridad (FS)</label>
