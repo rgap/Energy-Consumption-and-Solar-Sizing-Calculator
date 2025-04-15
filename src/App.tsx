@@ -26,9 +26,13 @@ function App() {
   const [draggedOverIndex, setDraggedOverIndex] = useState<number | null>(null);
   const [calcConfig, setCalcConfig] = useState({
     factorSeguridad: 1.2,
-    eficaciaInversor: 0.87,
+    eficienciaInversor: 0.87,
     horasSolPico: 5.27,
     diasAutonomia: 3,
+    costoPorKwh: 0.55,
+    voltajeNominalSistema: 12, // Default value for system voltage
+    voltajeNominalPanel: 12, // Voltaje nominal del panel (V)
+    corrienteNominalPanel: 5.5, // Corriente nominal del panel (A)
   });
 
   useEffect(() => {
@@ -53,12 +57,7 @@ function App() {
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const query = event.target.value.toLowerCase();
       setSearchQuery(query);
-      const filtered = equipos.filter(
-        equipo =>
-          equipo.nombre.toLowerCase().includes(query) ||
-          equipo.potencia.toString().includes(query) ||
-          equipo.voltaje_entrada.toString().includes(query)
-      );
+      const filtered = equipos.filter(equipo => equipo.nombre.toLowerCase().includes(query) || equipo.potencia.toString().includes(query));
       setFilteredEquipos(filtered);
     },
     [equipos]
@@ -234,9 +233,6 @@ function App() {
   return (
     <div className="app-container">
       <header className="header">
-        <button className="hamburger-button" onClick={handleMenuClick}>
-          <FiMenu />
-        </button>
         <div className="title-section">
           <h1>Calculadora de Consumo y Dimensionamiento Solar</h1>
         </div>
@@ -247,7 +243,7 @@ function App() {
           <input
             type="text"
             className="search-input"
-            placeholder="Buscar equipo por nombre, potencia o voltaje..."
+            placeholder="Buscar equipo por nombre o potencia..."
             value={searchQuery}
             onChange={handleSearchChange}
           />
@@ -384,51 +380,200 @@ function App() {
                     </tbody>
                   </table>
                 </div>
-                <div className="config-section">
-                  <div className="config-group">
-                    <label>Factor de Seguridad (FS)</label>
+
+                <div className="consumption-section">
+                  <h3>Consumo y Costos de Energía</h3>
+                  <div className="config-item cost-input">
+                    <label>Costo por kWh (S/.):</label>
                     <input
                       type="number"
-                      value={calcConfig.factorSeguridad}
-                      onChange={e => handleConfigChange("factorSeguridad", e.target.value)}
-                      onClick={e => e.currentTarget.select()}
-                      min="1"
-                      step="0.1"
-                    />
-                  </div>
-                  <div className="config-group">
-                    <label>Eficiencia del Inversor</label>
-                    <input
-                      type="number"
-                      value={calcConfig.eficaciaInversor}
-                      onChange={e => handleConfigChange("eficaciaInversor", e.target.value)}
+                      value={calcConfig.costoPorKwh}
+                      onChange={e => handleConfigChange("costoPorKwh", e.target.value)}
                       onClick={e => e.currentTarget.select()}
                       min="0"
-                      max="1"
                       step="0.01"
                     />
                   </div>
-                  <div className="config-group">
-                    <label>Horas Sol Pico (HSP)</label>
-                    <input
-                      type="number"
-                      value={calcConfig.horasSolPico}
-                      onChange={e => handleConfigChange("horasSolPico", e.target.value)}
-                      onClick={e => e.currentTarget.select()}
-                      min="0"
-                      step="0.1"
-                    />
+
+                  <div className="consumption-grid">
+                    <div className="consumption-item">
+                      <div className="consumption-title">Consumo Diario</div>
+                      <div className="consumption-row">
+                        <span>{(totals.energiaTotal / 1000).toFixed(2)} kWh</span>
+                        <span>S/. {((totals.energiaTotal / 1000) * calcConfig.costoPorKwh).toFixed(2)}</span>
+                      </div>
+                    </div>
+                    <div className="consumption-item">
+                      <div className="consumption-title">Consumo Semanal</div>
+                      <div className="consumption-row">
+                        <span>{((totals.energiaTotal * 7) / 1000).toFixed(2)} kWh</span>
+                        <span>S/. {(((totals.energiaTotal * 7) / 1000) * calcConfig.costoPorKwh).toFixed(2)}</span>
+                      </div>
+                    </div>
+                    <div className="consumption-item">
+                      <div className="consumption-title">Consumo Mensual</div>
+                      <div className="consumption-row">
+                        <span>{((totals.energiaTotal * 30) / 1000).toFixed(2)} kWh</span>
+                        <span>S/. {(((totals.energiaTotal * 30) / 1000) * calcConfig.costoPorKwh).toFixed(2)}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="config-group">
-                    <label>Días de Autonomía</label>
-                    <input
-                      type="number"
-                      value={calcConfig.diasAutonomia}
-                      onChange={e => handleConfigChange("diasAutonomia", e.target.value)}
-                      onClick={e => e.currentTarget.select()}
-                      min="1"
-                      step="1"
-                    />
+                </div>
+
+                <div className="config-section">
+                  <h3>Configuración del Sistema</h3>
+                  <div className="config-grid">
+                    <div className="config-item">
+                      <label>Factor de Seguridad:</label>
+                      <input
+                        type="number"
+                        value={calcConfig.factorSeguridad}
+                        onChange={e => handleConfigChange("factorSeguridad", e.target.value)}
+                        onClick={e => e.currentTarget.select()}
+                        min="1"
+                        step="0.1"
+                      />
+                    </div>
+                    <div className="config-item">
+                      <label>Voltaje Nominal del Sistema (V):</label>
+                      <input
+                        type="number"
+                        value={calcConfig.voltajeNominalSistema}
+                        onChange={e => handleConfigChange("voltajeNominalSistema", e.target.value)}
+                        onClick={e => e.currentTarget.select()}
+                        min="12"
+                        step="12"
+                      />
+                    </div>
+                    <div className="config-item">
+                      <label>Eficiencia del Inversor:</label>
+                      <input
+                        type="number"
+                        value={calcConfig.eficienciaInversor}
+                        onChange={e => handleConfigChange("eficienciaInversor", e.target.value)}
+                        onClick={e => e.currentTarget.select()}
+                        min="0"
+                        max="1"
+                        step="0.01"
+                      />
+                    </div>
+                    <div className="config-item">
+                      <label>Horas Sol Pico (HSP):</label>
+                      <input
+                        type="number"
+                        value={calcConfig.horasSolPico}
+                        onChange={e => handleConfigChange("horasSolPico", e.target.value)}
+                        onClick={e => e.currentTarget.select()}
+                        min="0"
+                        max="24"
+                        step="0.1"
+                      />
+                    </div>
+                    <div className="config-item">
+                      <label>Voltaje Nominal Panel (V):</label>
+                      <input
+                        type="number"
+                        value={calcConfig.voltajeNominalPanel}
+                        onChange={e => handleConfigChange("voltajeNominalPanel", e.target.value)}
+                        onClick={e => e.currentTarget.select()}
+                        min="12"
+                        step="12"
+                      />
+                    </div>
+                    <div className="config-item">
+                      <label>Corriente Nominal Panel (A):</label>
+                      <input
+                        type="number"
+                        value={calcConfig.corrienteNominalPanel}
+                        onChange={e => handleConfigChange("corrienteNominalPanel", e.target.value)}
+                        onClick={e => e.currentTarget.select()}
+                        min="0"
+                        step="0.1"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="calculations-results">
+                    <h3>Resultados del Dimensionamiento</h3>
+                    <div className="results-grid">
+                      <div className="result-item">
+                        <label>Energía Diaria Necesaria en DC (Wh):</label>
+                        <span>{(totals.energiaTotal / calcConfig.eficienciaInversor).toFixed(2)} Wh</span>
+                        <div className="formula">
+                          Energía Diaria Necesaria en DC (Wh) = Energía Diaria de Salida en AC (Wh) / Eficiencia del Inversor
+                          <br />= {totals.energiaTotal.toFixed(2)} Wh / {calcConfig.eficienciaInversor}={" "}
+                          {(totals.energiaTotal / calcConfig.eficienciaInversor).toFixed(2)} Wh
+                        </div>
+                      </div>
+                      <div className="result-item">
+                        <label>Corriente Diaria Necesaria en DC (Ah):</label>
+                        <span>
+                          {(
+                            (totals.energiaTotal / calcConfig.eficienciaInversor / calcConfig.voltajeNominalSistema) *
+                            calcConfig.factorSeguridad
+                          ).toFixed(2)}{" "}
+                          Ah
+                        </span>
+                        <div className="formula">
+                          Corriente Diaria Necesaria en DC (Ah) = (Energía Diaria Necesaria en DC (Wh) / Voltaje Nominal del Sistema (V)) × FS
+                          <br />= ({(totals.energiaTotal / calcConfig.eficienciaInversor).toFixed(2)} Wh / {calcConfig.voltajeNominalSistema} V) ×{" "}
+                          {calcConfig.factorSeguridad}={" "}
+                          {(
+                            (totals.energiaTotal / calcConfig.eficienciaInversor / calcConfig.voltajeNominalSistema) *
+                            calcConfig.factorSeguridad
+                          ).toFixed(2)}{" "}
+                          Ah
+                        </div>
+                      </div>
+                      <div className="result-item">
+                        <label>#Paneles en paralelo:</label>
+                        <span>
+                          {(() => {
+                            const value =
+                              ((totals.energiaTotal / calcConfig.eficienciaInversor / calcConfig.voltajeNominalSistema) *
+                                calcConfig.factorSeguridad) /
+                              (calcConfig.horasSolPico * calcConfig.corrienteNominalPanel);
+                            return Number.isInteger(value) ? value.toString() : value.toFixed(2);
+                          })()}
+                        </span>
+                        <div className="formula">
+                          #Paneles en paralelo = Corriente diaria requerida (Ah) / (HSP × Corriente Nominal del Panel (A))
+                          <br />={" "}
+                          {(
+                            (totals.energiaTotal / calcConfig.eficienciaInversor / calcConfig.voltajeNominalSistema) *
+                            calcConfig.factorSeguridad
+                          ).toFixed(2)}{" "}
+                          Ah / ({calcConfig.horasSolPico} × {calcConfig.corrienteNominalPanel} A) ={" "}
+                          {(
+                            ((totals.energiaTotal / calcConfig.eficienciaInversor / calcConfig.voltajeNominalSistema) * calcConfig.factorSeguridad) /
+                            (calcConfig.horasSolPico * calcConfig.corrienteNominalPanel)
+                          ).toFixed(2)}
+                        </div>
+                      </div>
+                      <div className="result-item">
+                        <label>#Paneles en Serie:</label>
+                        <span>
+                          {(() => {
+                            const value = calcConfig.voltajeNominalSistema / calcConfig.voltajeNominalPanel;
+                            return Number.isInteger(value) ? value.toString() : value.toFixed(2);
+                          })()}
+                        </span>
+                        <div className="formula">
+                          #Paneles en Serie = Voltaje del Sistema (V) / Voltaje del Panel (V)
+                          <br />= {calcConfig.voltajeNominalSistema} V / {calcConfig.voltajeNominalPanel} V ={" "}
+                          {(calcConfig.voltajeNominalSistema / calcConfig.voltajeNominalPanel).toFixed(2)}
+                        </div>
+                      </div>
+                      <div className="result-item">
+                        <label>Potencia Mínima del Panel (W):</label>
+                        <span>{(calcConfig.voltajeNominalPanel * calcConfig.corrienteNominalPanel).toFixed(1)} W</span>
+                        <div className="formula">
+                          Potencia Mínima del Panel (W) = Voltaje Nominal del Panel (V) × Corriente Nominal del Panel (A)
+                          <br />= {calcConfig.voltajeNominalPanel} V × {calcConfig.corrienteNominalPanel} A ={" "}
+                          {(calcConfig.voltajeNominalPanel * calcConfig.corrienteNominalPanel).toFixed(1)} W
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

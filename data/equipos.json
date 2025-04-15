@@ -3,7 +3,7 @@
     "nombre": "Televisor 42\"",
     "voltaje_entrada": 220,
     "amperaje": 0.27,
-    "uso_diario_esperado": 4,
+    "uso_diario_esperado": 2,
     "potencia": 60
   },
   {
@@ -17,14 +17,14 @@
     "nombre": "Laptop",
     "voltaje_entrada": 220,
     "amperaje": 0.2,
-    "uso_diario_esperado": 3,
+    "uso_diario_esperado": 5,
     "potencia": 45
   },
   {
     "nombre": "Bombillo LED",
     "voltaje_entrada": 220,
     "amperaje": 0.04,
-    "uso_diario_esperado": 5,
+    "uso_diario_esperado": 4.89,
     "potencia": 9
   },
   {
