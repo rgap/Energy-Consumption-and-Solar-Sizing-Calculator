@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FiMenu, FiSearch } from "react-icons/fi";
 import "./App.css";
 
@@ -23,6 +23,7 @@ function App() {
   const [equipos, setEquipos] = useState<Equipo[]>([]);
   const [filteredEquipos, setFilteredEquipos] = useState<Equipo[]>([]);
   const [selectedEquipos, setSelectedEquipos] = useState<SelectedEquipo[]>([]);
+  const [draggedOverIndex, setDraggedOverIndex] = useState<number | null>(null);
   const [calcConfig, setCalcConfig] = useState({
     factorSeguridad: 1.2,
     eficaciaInversor: 0.87,
@@ -31,31 +32,45 @@ function App() {
   });
 
   useEffect(() => {
-    // Load equipos data when component mounts
     fetch("/data/equipos.json")
       .then(response => response.json())
       .then(data => {
         setEquipos(data);
         setFilteredEquipos(data);
       })
-      .catch(error => console.error("Error loading equipos:", error));
+      .catch(error => {
+        console.error("Error loading equipos:", error);
+        // Show error message to user
+        alert("Error al cargar los equipos. Por favor, recarga la página.");
+      });
   }, []);
 
   const handleMenuClick = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-
-    // Filter equipos based on search query
-    const filtered = equipos.filter(equipo => equipo.nombre.toLowerCase().includes(query));
-    setFilteredEquipos(filtered);
-  };
+  const handleSearchChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const query = event.target.value.toLowerCase();
+      setSearchQuery(query);
+      const filtered = equipos.filter(
+        equipo =>
+          equipo.nombre.toLowerCase().includes(query) ||
+          equipo.potencia.toString().includes(query) ||
+          equipo.voltaje_entrada.toString().includes(query)
+      );
+      setFilteredEquipos(filtered);
+    },
+    [equipos]
+  );
 
   const handleDragStart = (event: React.DragEvent, equipo: Equipo) => {
     event.dataTransfer.setData("application/json", JSON.stringify(equipo));
+    event.currentTarget.classList.add("dragging");
+  };
+
+  const handleDragEnd = (event: React.DragEvent) => {
+    event.currentTarget.classList.remove("dragging");
   };
 
   const handleDragOver = (event: React.DragEvent) => {
@@ -67,132 +82,153 @@ function App() {
     event.currentTarget.classList.remove("drag-over");
   };
 
-  const cleanupDragOverClasses = () => {
-    const items = Array.from(document.getElementsByClassName("selected-equipment-item"));
-    items.forEach(item => item.classList.remove("drag-over"));
-  };
+  const handleDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      event.currentTarget.classList.remove("drag-over");
 
-  const handleDrop = (event: React.DragEvent) => {
-    event.preventDefault();
-    event.currentTarget.classList.remove("drag-over");
-    cleanupDragOverClasses();
+      try {
+        const draggedData = event.dataTransfer.getData("application/json");
+        if (!draggedData) return;
 
-    try {
-      const draggedData = event.dataTransfer.getData("application/json");
-      if (!draggedData) return;
-
-      const data = JSON.parse(draggedData);
-      // Only process items from the sidebar, not reordering
-      if (!data.type && data.nombre) {
-        if (!selectedEquipos.some(e => e.nombre === data.nombre)) {
-          const selectedEquipo: SelectedEquipo = {
-            ...data,
-            cantidad: 1,
-            horas: 1,
-            editedAmperaje: data.amperaje,
-            editedPotencia: data.potencia,
-          };
-
-          // Get the drop position relative to the grid
-          const gridElement = event.currentTarget.querySelector(".selected-equipment-grid");
-          if (gridElement) {
-            const rect = gridElement.getBoundingClientRect();
-            const items = Array.from(gridElement.children);
-            const itemWidth = items.length > 0 ? items[0].getBoundingClientRect().width : 0;
-            const itemsPerRow = Math.floor(rect.width / (itemWidth + 16)); // 16px is the gap
-
-            // Calculate drop position
-            const relativeX = event.clientX - rect.left;
-            const relativeY = event.clientY - rect.top;
-            const col = Math.floor(relativeX / (itemWidth + 16));
-            const row = Math.floor(relativeY / (itemWidth + 16));
-            const targetIndex = Math.min(row * itemsPerRow + col, selectedEquipos.length);
-
-            // Insert at calculated position
-            const newItems = [...selectedEquipos];
-            newItems.splice(targetIndex, 0, selectedEquipo);
-            setSelectedEquipos(newItems);
-          } else {
-            // Fallback if grid not found
-            setSelectedEquipos([...selectedEquipos, selectedEquipo]);
+        const data = JSON.parse(draggedData);
+        if (!data.type && data.nombre) {
+          if (!selectedEquipos.some(e => e.nombre === data.nombre)) {
+            const selectedEquipo: SelectedEquipo = {
+              ...data,
+              cantidad: 1,
+              horas: data.uso_diario_esperado || 1,
+              editedAmperaje: data.amperaje,
+              editedPotencia: data.potencia,
+            };
+            setSelectedEquipos(prev => [...prev, selectedEquipo]);
           }
         }
+      } catch (error) {
+        console.error("Error adding equipment:", error);
       }
-    } catch (error) {
-      console.error("Error adding equipment:", error);
-    }
-  };
-
-  const handleRemoveEquipo = (equipoToRemove: Equipo) => {
-    setSelectedEquipos(selectedEquipos.filter(equipo => equipo.nombre !== equipoToRemove.nombre));
-  };
+    },
+    [selectedEquipos]
+  );
 
   const handleSelectedItemDragStart = (event: React.DragEvent, index: number) => {
-    event.dataTransfer.setData("application/json", JSON.stringify({ type: "reorder", index, equipo: selectedEquipos[index] }));
-  };
-
-  const handleSelectedItemDragOver = (event: React.DragEvent) => {
-    event.preventDefault();
-    cleanupDragOverClasses();
-    const target = event.currentTarget as HTMLElement;
-    target.classList.add("drag-over");
-  };
-
-  const handleSelectedItemDrop = (event: React.DragEvent, dropIndex: number) => {
-    event.preventDefault();
-    cleanupDragOverClasses();
-
-    try {
-      const draggedData = event.dataTransfer.getData("application/json");
-      if (!draggedData) return;
-
-      const data = JSON.parse(draggedData);
-
-      if (data.type === "reorder") {
-        // Reordering within selected items
-        const dragIndex = data.index;
-        if (dragIndex === dropIndex) return; // Don't reorder if dropped in same position
-
-        const newItems = [...selectedEquipos];
-        const [removed] = newItems.splice(dragIndex, 1);
-        newItems.splice(dropIndex, 0, removed);
-        setSelectedEquipos(newItems);
-      } else if (!data.type && data.nombre) {
-        // Check if it's an equipment item
-        // Adding new item from the sidebar
-        if (!selectedEquipos.some(e => e.nombre === data.nombre)) {
-          const newItems = [...selectedEquipos];
-          newItems.splice(dropIndex, 0, data);
-          setSelectedEquipos(newItems);
-        }
-      }
-
-      // Remove drag-over class from all items
-      const items = Array.from(document.getElementsByClassName("selected-equipment-item"));
-      items.forEach(item => item.classList.remove("drag-over"));
-    } catch (error) {
-      console.error("Error in drop operation:", error);
+    // Only allow dragging if we're dragging a tr element or its direct children
+    const trElement = (event.target as HTMLElement).closest("tr");
+    if (!trElement) {
+      event.preventDefault();
+      return;
     }
+
+    event.dataTransfer.setData("application/json", JSON.stringify({ type: "reorder", index }));
+    trElement.classList.add("dragging");
   };
 
-  const handleFieldChange = (index: number, field: "editedPotencia" | "editedAmperaje" | "cantidad" | "horas", value: string) => {
-    const newValue = parseFloat(value) || 0;
-    setSelectedEquipos(prevEquipos => {
-      const newEquipos = [...prevEquipos];
+  const handleSelectedItemDragEnd = (event: React.DragEvent) => {
+    const trElement = (event.target as HTMLElement).closest("tr");
+    if (trElement) {
+      trElement.classList.remove("dragging");
+    }
+    setDraggedOverIndex(null);
+  };
+
+  const handleSelectedItemDragOver = (event: React.DragEvent, index: number) => {
+    event.preventDefault();
+    setDraggedOverIndex(index);
+  };
+
+  const handleSelectedItemDrop = useCallback(
+    (event: React.DragEvent, dropIndex: number) => {
+      event.preventDefault();
+      setDraggedOverIndex(null);
+
+      try {
+        const draggedData = event.dataTransfer.getData("application/json");
+        if (!draggedData) return;
+
+        const data = JSON.parse(draggedData);
+        if (data.type === "reorder") {
+          // Handle reordering of existing items
+          const dragIndex = data.index;
+          if (dragIndex === dropIndex) return;
+
+          setSelectedEquipos(prev => {
+            const newItems = [...prev];
+            const [removed] = newItems.splice(dragIndex, 1);
+            newItems.splice(dropIndex, 0, removed);
+            return newItems;
+          });
+        } else if (data.nombre) {
+          // Handle dropping new equipment from the list
+          if (!selectedEquipos.some(e => e.nombre === data.nombre)) {
+            const selectedEquipo: SelectedEquipo = {
+              ...data,
+              cantidad: 1,
+              horas: data.uso_diario_esperado || 1,
+              editedAmperaje: data.amperaje,
+              editedPotencia: data.potencia,
+            };
+            setSelectedEquipos(prev => {
+              const newItems = [...prev];
+              newItems.splice(dropIndex, 0, selectedEquipo);
+              return newItems;
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error in drop operation:", error);
+      }
+    },
+    [selectedEquipos]
+  );
+
+  const handleFieldChange = useCallback((index: number, field: keyof SelectedEquipo, value: string) => {
+    const numValue = parseFloat(value) || 0;
+    if (numValue < 0) return; // Prevent negative values
+
+    setSelectedEquipos(prev => {
+      const newEquipos = [...prev];
       newEquipos[index] = {
         ...newEquipos[index],
-        [field]: newValue,
+        [field]: numValue,
       };
       return newEquipos;
     });
-  };
+  }, []);
 
-  const handleConfigChange = (field: string, value: string) => {
-    const newValue = parseFloat(value) || 0;
-    setCalcConfig(prevConfig => ({
-      ...prevConfig,
-      [field]: newValue,
+  const handleAddEquipo = useCallback(
+    (equipo: Equipo) => {
+      if (!selectedEquipos.some(e => e.nombre === equipo.nombre)) {
+        const selectedEquipo: SelectedEquipo = {
+          ...equipo,
+          cantidad: 1,
+          horas: equipo.uso_diario_esperado || 1,
+          editedAmperaje: equipo.amperaje,
+          editedPotencia: equipo.potencia,
+        };
+        setSelectedEquipos(prev => [...prev, selectedEquipo]);
+      }
+    },
+    [selectedEquipos]
+  );
+
+  const handleRemoveEquipo = useCallback((equipoToRemove: Equipo) => {
+    setSelectedEquipos(prev => prev.filter(equipo => equipo.nombre !== equipoToRemove.nombre));
+  }, []);
+
+  const handleConfigChange = useCallback((field: string, value: string) => {
+    const numValue = parseFloat(value) || 0;
+    if (numValue < 0) return; // Prevent negative values
+
+    setCalcConfig(prev => ({
+      ...prev,
+      [field]: numValue,
     }));
+  }, []);
+
+  // Calculate totals
+  const totals = {
+    potenciaTotal: selectedEquipos.reduce((sum, equipo) => sum + equipo.editedPotencia * equipo.cantidad, 0),
+    energiaTotal: selectedEquipos.reduce((sum, equipo) => sum + equipo.editedPotencia * equipo.cantidad * equipo.horas, 0),
   };
 
   return (
@@ -201,14 +237,20 @@ function App() {
         <button className="hamburger-button" onClick={handleMenuClick}>
           <FiMenu />
         </button>
+        <div className="title-section">
+          <h1>Calculadora de Consumo y Dimensionamiento Solar</h1>
+        </div>
       </header>
-      <div className="title-section">
-        <h1>Cálculo de Energía</h1>
-      </div>
       <div className="search-section">
         <div className="search-container">
           <FiSearch className="search-icon" />
-          <input type="text" className="search-input" placeholder="Buscar equipo..." value={searchQuery} onChange={handleSearchChange} />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Buscar equipo por nombre, potencia o voltaje..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
         </div>
       </div>
       <div className="content-wrapper">
@@ -216,14 +258,21 @@ function App() {
           {filteredEquipos.length > 0 ? (
             <ul className="equipment-list">
               {filteredEquipos.map((equipo, index) => (
-                <li key={index} className="equipment-item" draggable onDragStart={e => handleDragStart(e, equipo)}>
+                <li key={index} className="equipment-item" draggable onDragStart={e => handleDragStart(e, equipo)} onDragEnd={handleDragEnd}>
                   <div className="equipment-details">
                     <div className="equipment-name">{equipo.nombre}</div>
                     <div className="equipment-specs">
-                      {equipo.voltaje_entrada}V, {equipo.amperaje}A
+                      {equipo.voltaje_entrada}V, {equipo.amperaje}A, {equipo.potencia}W
                     </div>
-                    <div className="equipment-usage">Uso estimado {equipo.uso_diario_esperado}h/dia</div>
+                    <div className="equipment-usage">Uso estimado {equipo.uso_diario_esperado}h/día</div>
                   </div>
+                  <button
+                    className="add-button"
+                    onClick={() => handleAddEquipo(equipo)}
+                    disabled={selectedEquipos.some(e => e.nombre === equipo.nombre)}
+                  >
+                    Agregar
+                  </button>
                 </li>
               ))}
             </ul>
@@ -233,84 +282,6 @@ function App() {
         </aside>
 
         <div className="right-panel">
-          <div className="list-container">
-            <section className="product-list" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-              {selectedEquipos.length > 0 ? (
-                <div className="selected-equipment-grid">
-                  {selectedEquipos.map((equipo, index) => (
-                    <div
-                      key={index}
-                      className="selected-equipment-item"
-                      onDragOver={handleSelectedItemDragOver}
-                      onDrop={e => handleSelectedItemDrop(e, index)}
-                      onDragLeave={e => {
-                        e.currentTarget.classList.remove("drag-over");
-                      }}
-                    >
-                      <button className="drag-handle" draggable onDragStart={e => handleSelectedItemDragStart(e, index)} title="Arrastrar">
-                        ⋮⋮
-                      </button>
-                      <button className="remove-button" onClick={() => handleRemoveEquipo(equipo)} title="Eliminar">
-                        ×
-                      </button>
-                      <div className="equipment-details">
-                        <div className="equipment-name">{equipo.nombre}</div>
-                        <div className="input-group">
-                          <label>Potencia</label>
-                          <div className="input-field-container">
-                            <input
-                              value={equipo.editedPotencia}
-                              onChange={e => handleFieldChange(index, "editedPotencia", e.target.value)}
-                              onClick={e => e.currentTarget.select()}
-                            />
-                            <span>W</span>
-                          </div>
-                        </div>
-                        {/* <div className="input-group">
-                          <label>Amperaje</label>
-                          <div className="input-field-container">
-                            <input
-                              value={equipo.editedAmperaje}
-                              onChange={e => handleFieldChange(index, "editedAmperaje", e.target.value)}
-                              onClick={e => e.currentTarget.select()}
-                            />
-                            <span>A</span>
-                          </div>
-                        </div> */}
-                        <div className="input-group">
-                          <label>Cantidad</label>
-                          <div className="input-field-container">
-                            <input
-                              value={equipo.cantidad}
-                              onChange={e => handleFieldChange(index, "cantidad", e.target.value)}
-                              onClick={e => e.currentTarget.select()}
-                              min="1"
-                            />
-                            <span></span>
-                          </div>
-                        </div>
-                        <div className="input-group">
-                          <label>Horas al día</label>
-                          <div className="input-field-container">
-                            <input
-                              value={equipo.horas}
-                              onChange={e => handleFieldChange(index, "horas", e.target.value)}
-                              onClick={e => e.currentTarget.select()}
-                              min="0"
-                              max="24"
-                            />
-                            <span></span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="centered-text">Arrastra equipos aquí para agregarlos</div>
-              )}
-            </section>
-          </div>
           <section className="calculations-section">
             {selectedEquipos.length > 0 ? (
               <div className="calculations-container">
@@ -318,6 +289,7 @@ function App() {
                   <table>
                     <thead>
                       <tr>
+                        <th className="actions-cell">Acciones</th>
                         <th>Equipo</th>
                         <th>Potencia (W)</th>
                         <th>Cantidad</th>
@@ -331,23 +303,83 @@ function App() {
                         const potenciaTotal = equipo.editedPotencia * equipo.cantidad;
                         const energia = potenciaTotal * equipo.horas;
                         return (
-                          <tr key={index}>
+                          <tr
+                            key={index}
+                            className={draggedOverIndex === index ? "drag-over" : ""}
+                            onDragOver={e => {
+                              e.preventDefault();
+                              const trElement = (e.target as HTMLElement).closest("tr");
+                              if (trElement) {
+                                handleSelectedItemDragOver(e, index);
+                              }
+                            }}
+                            onDrop={e => {
+                              const trElement = (e.target as HTMLElement).closest("tr");
+                              if (trElement) {
+                                handleSelectedItemDrop(e, index);
+                              }
+                            }}
+                          >
+                            <td className="actions-cell">
+                              <div
+                                className="drag-handle"
+                                draggable
+                                onDragStart={e => handleSelectedItemDragStart(e, index)}
+                                onDragEnd={handleSelectedItemDragEnd}
+                                title="Arrastrar"
+                              >
+                                ⋮⋮
+                              </div>
+                              <button className="remove-button" onClick={() => handleRemoveEquipo(equipo)} title="Eliminar">
+                                ×
+                              </button>
+                            </td>
                             <td>{equipo.nombre}</td>
-                            <td>{equipo.editedPotencia.toFixed(0)}</td>
-                            <td>{equipo.cantidad}</td>
-                            <td>{potenciaTotal.toFixed(0)}</td>
-                            <td>{equipo.horas}</td>
-                            <td>{energia.toFixed(0)}</td>
+                            <td>
+                              <input
+                                type="number"
+                                value={equipo.editedPotencia}
+                                onChange={e => handleFieldChange(index, "editedPotencia", e.target.value)}
+                                onClick={e => e.currentTarget.select()}
+                                min="0"
+                                step="0.1"
+                              />
+                            </td>
+                            <td>
+                              <input
+                                type="number"
+                                value={equipo.cantidad}
+                                onChange={e => handleFieldChange(index, "cantidad", e.target.value)}
+                                onClick={e => e.currentTarget.select()}
+                                min="1"
+                                step="1"
+                              />
+                            </td>
+                            <td>{potenciaTotal.toFixed(1)}</td>
+                            <td>
+                              <input
+                                type="number"
+                                value={equipo.horas}
+                                onChange={e => handleFieldChange(index, "horas", e.target.value)}
+                                onClick={e => e.currentTarget.select()}
+                                min="0"
+                                max="24"
+                                step="0.5"
+                              />
+                            </td>
+                            <td>{energia.toFixed(1)}</td>
                           </tr>
                         );
                       })}
                       <tr className="totals-row">
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td>Potencia Total (Máxima)</td>
-                        <td>{selectedEquipos.reduce((sum, equipo) => sum + equipo.editedPotencia * equipo.cantidad, 0).toFixed(0)}</td>
-                        <td>Energía Consumida Diaria (Máxima)</td>
-                        <td>{selectedEquipos.reduce((sum, equipo) => sum + equipo.editedPotencia * equipo.cantidad * equipo.horas, 0).toFixed(0)}</td>
+                        <td>{totals.potenciaTotal.toFixed(1)}</td>
+                        <td>Energía Diaria (Máxima)</td>
+                        <td>{totals.energiaTotal.toFixed(1)}</td>
+                        <td></td>
                       </tr>
                     </tbody>
                   </table>
@@ -356,6 +388,7 @@ function App() {
                   <div className="config-group">
                     <label>Factor de Seguridad (FS)</label>
                     <input
+                      type="number"
                       value={calcConfig.factorSeguridad}
                       onChange={e => handleConfigChange("factorSeguridad", e.target.value)}
                       onClick={e => e.currentTarget.select()}
@@ -364,29 +397,32 @@ function App() {
                     />
                   </div>
                   <div className="config-group">
-                    <label>Eficacia del Inversor</label>
+                    <label>Eficiencia del Inversor</label>
                     <input
+                      type="number"
                       value={calcConfig.eficaciaInversor}
                       onChange={e => handleConfigChange("eficaciaInversor", e.target.value)}
                       onClick={e => e.currentTarget.select()}
                       min="0"
                       max="1"
-                      step="0.1"
+                      step="0.01"
                     />
                   </div>
                   <div className="config-group">
                     <label>Horas Sol Pico (HSP)</label>
                     <input
+                      type="number"
                       value={calcConfig.horasSolPico}
                       onChange={e => handleConfigChange("horasSolPico", e.target.value)}
                       onClick={e => e.currentTarget.select()}
                       min="0"
-                      step="0.5"
+                      step="0.1"
                     />
                   </div>
                   <div className="config-group">
-                    <label>#Dias de Autonomía</label>
+                    <label>Días de Autonomía</label>
                     <input
+                      type="number"
                       value={calcConfig.diasAutonomia}
                       onChange={e => handleConfigChange("diasAutonomia", e.target.value)}
                       onClick={e => e.currentTarget.select()}
@@ -397,7 +433,9 @@ function App() {
                 </div>
               </div>
             ) : (
-              <div className="centered-text">Aquí irán los cálculos</div>
+              <div className="calculations-table" onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+                <div className="centered-text">Arrastra equipos aquí para agregarlos</div>
+              </div>
             )}
           </section>
         </div>
