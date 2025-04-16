@@ -49,10 +49,6 @@ function App() {
       });
   }, []);
 
-  const handleMenuClick = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
   const handleSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const query = event.target.value.toLowerCase();
