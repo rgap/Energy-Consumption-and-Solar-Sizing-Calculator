@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { FiMenu, FiSearch } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import "./App.css";
 
 interface Equipo {
@@ -194,6 +194,10 @@ function App() {
     });
   }, []);
 
+  const handleRemoveEquipo = useCallback((equipoToRemove: Equipo) => {
+    setSelectedEquipos(prev => prev.filter(equipo => equipo.nombre !== equipoToRemove.nombre));
+  }, []);
+
   const handleAddEquipo = useCallback(
     (equipo: Equipo) => {
       if (!selectedEquipos.some(e => e.nombre === equipo.nombre)) {
@@ -205,14 +209,12 @@ function App() {
           editedPotencia: equipo.potencia,
         };
         setSelectedEquipos(prev => [...prev, selectedEquipo]);
+      } else {
+        handleRemoveEquipo(equipo);
       }
     },
-    [selectedEquipos]
+    [selectedEquipos, handleRemoveEquipo]
   );
-
-  const handleRemoveEquipo = useCallback((equipoToRemove: Equipo) => {
-    setSelectedEquipos(prev => prev.filter(equipo => equipo.nombre !== equipoToRemove.nombre));
-  }, []);
 
   const handleConfigChange = useCallback((field: string, value: string) => {
     const numValue = parseFloat(value) || 0;
@@ -263,11 +265,10 @@ function App() {
                     <div className="equipment-usage">Uso estimado {equipo.uso_diario_esperado}h/día</div>
                   </div>
                   <button
-                    className="add-button"
+                    className={`add-button ${selectedEquipos.some(e => e.nombre === equipo.nombre) ? "remove-state" : ""}`}
                     onClick={() => handleAddEquipo(equipo)}
-                    disabled={selectedEquipos.some(e => e.nombre === equipo.nombre)}
                   >
-                    Agregar
+                    {selectedEquipos.some(e => e.nombre === equipo.nombre) ? "Eliminar" : "Agregar"}
                   </button>
                 </li>
               ))}
