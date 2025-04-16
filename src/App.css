@@ -657,9 +657,18 @@ input[type="number"] {
 
 .calculations-results {
   background-color: white;
-  padding: 20px;
+  padding: 24px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+}
+
+.calculations-results h3 {
+  color: #1a202c;
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .results-grid {
@@ -790,4 +799,24 @@ input[type="number"] {
   margin-bottom: 8px;
   content: "";
   display: block;
+}
+
+.results-section {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.results-section h4 {
+  color: #2d3748;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.results-section:first-child {
+  margin-top: 0;
 }

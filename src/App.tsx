@@ -35,7 +35,7 @@ function App() {
   });
 
   useEffect(() => {
-    fetch("/src/data/equipos.json")
+    fetch("/equipos.json")
       .then(response => response.json())
       .then(data => {
         setEquipos(data);
@@ -416,81 +416,12 @@ function App() {
                   </div>
                 </div>
 
-                <div className="config-section">
-                  <h3>Configuración del Sistema</h3>
-                  <div className="config-grid">
-                    <div className="config-item">
-                      <label>Factor de Seguridad:</label>
-                      <input
-                        type="number"
-                        value={calcConfig.factorSeguridad}
-                        onChange={e => handleConfigChange("factorSeguridad", e.target.value)}
-                        onClick={e => e.currentTarget.select()}
-                        min="1"
-                        step="0.1"
-                      />
-                    </div>
-                    <div className="config-item">
-                      <label>Voltaje Nominal del Sistema (V):</label>
-                      <input
-                        type="number"
-                        value={calcConfig.voltajeNominalSistema}
-                        onChange={e => handleConfigChange("voltajeNominalSistema", e.target.value)}
-                        onClick={e => e.currentTarget.select()}
-                        min="12"
-                        step="12"
-                      />
-                    </div>
-                    <div className="config-item">
-                      <label>Eficiencia del Inversor:</label>
-                      <input
-                        type="number"
-                        value={calcConfig.eficienciaInversor}
-                        onChange={e => handleConfigChange("eficienciaInversor", e.target.value)}
-                        onClick={e => e.currentTarget.select()}
-                        min="0"
-                        max="1"
-                        step="0.01"
-                      />
-                    </div>
-                    <div className="config-item">
-                      <label>Horas Sol Pico (HSP):</label>
-                      <input
-                        type="number"
-                        value={calcConfig.horasSolPico}
-                        onChange={e => handleConfigChange("horasSolPico", e.target.value)}
-                        onClick={e => e.currentTarget.select()}
-                        min="0"
-                        max="24"
-                        step="0.1"
-                      />
-                    </div>
-                    <div className="config-item">
-                      <label>Voltaje Nominal Panel (V):</label>
-                      <input
-                        type="number"
-                        value={calcConfig.voltajeNominalPanel}
-                        onChange={e => handleConfigChange("voltajeNominalPanel", e.target.value)}
-                        onClick={e => e.currentTarget.select()}
-                        min="12"
-                        step="12"
-                      />
-                    </div>
-                    <div className="config-item">
-                      <label>Corriente Nominal Panel (A):</label>
-                      <input
-                        type="number"
-                        value={calcConfig.corrienteNominalPanel}
-                        onChange={e => handleConfigChange("corrienteNominalPanel", e.target.value)}
-                        onClick={e => e.currentTarget.select()}
-                        min="0"
-                        step="0.1"
-                      />
-                    </div>
-                  </div>
+                <div className="calculations-results">
+                  <h3>Resultados del Dimensionamiento</h3>
 
-                  <div className="calculations-results">
-                    <h3>Resultados del Dimensionamiento</h3>
+                  {/* First Section - Daily Energy Requirements */}
+                  <div className="results-section">
+                    <h4>Requerimientos Diarios de Energía</h4>
                     <div className="results-grid">
                       <div className="result-item">
                         <label>Energía Diaria Necesaria en DC (Wh):</label>
@@ -521,6 +452,86 @@ function App() {
                           Ah
                         </div>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Second Section - System Configuration and Results */}
+                  <div className="results-section">
+                    <h4>Dimensionamiento del Sistema</h4>
+                    <div className="config-section">
+                      <div className="config-grid">
+                        <div className="config-item">
+                          <label>Factor de Seguridad:</label>
+                          <input
+                            type="number"
+                            value={calcConfig.factorSeguridad}
+                            onChange={e => handleConfigChange("factorSeguridad", e.target.value)}
+                            onClick={e => e.currentTarget.select()}
+                            min="1"
+                            step="0.1"
+                          />
+                        </div>
+                        <div className="config-item">
+                          <label>Voltaje Nominal del Sistema (V):</label>
+                          <input
+                            type="number"
+                            value={calcConfig.voltajeNominalSistema}
+                            onChange={e => handleConfigChange("voltajeNominalSistema", e.target.value)}
+                            onClick={e => e.currentTarget.select()}
+                            min="12"
+                            step="12"
+                          />
+                        </div>
+                        <div className="config-item">
+                          <label>Eficiencia del Inversor:</label>
+                          <input
+                            type="number"
+                            value={calcConfig.eficienciaInversor}
+                            onChange={e => handleConfigChange("eficienciaInversor", e.target.value)}
+                            onClick={e => e.currentTarget.select()}
+                            min="0"
+                            max="1"
+                            step="0.01"
+                          />
+                        </div>
+                        <div className="config-item">
+                          <label>Horas Sol Pico (HSP):</label>
+                          <input
+                            type="number"
+                            value={calcConfig.horasSolPico}
+                            onChange={e => handleConfigChange("horasSolPico", e.target.value)}
+                            onClick={e => e.currentTarget.select()}
+                            min="0"
+                            max="24"
+                            step="0.1"
+                          />
+                        </div>
+                        <div className="config-item">
+                          <label>Voltaje Nominal Panel (V):</label>
+                          <input
+                            type="number"
+                            value={calcConfig.voltajeNominalPanel}
+                            onChange={e => handleConfigChange("voltajeNominalPanel", e.target.value)}
+                            onClick={e => e.currentTarget.select()}
+                            min="12"
+                            step="12"
+                          />
+                        </div>
+                        <div className="config-item">
+                          <label>Corriente Nominal Panel (A):</label>
+                          <input
+                            type="number"
+                            value={calcConfig.corrienteNominalPanel}
+                            onChange={e => handleConfigChange("corrienteNominalPanel", e.target.value)}
+                            onClick={e => e.currentTarget.select()}
+                            min="0"
+                            step="0.1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="results-grid">
                       <div className="result-item">
                         <label>#Paneles en paralelo:</label>
                         <span>
