@@ -35,7 +35,7 @@ function App() {
   });
 
   useEffect(() => {
-    fetch("/data/equipos.json")
+    fetch("/src/data/equipos.json")
       .then(response => response.json())
       .then(data => {
         setEquipos(data);
