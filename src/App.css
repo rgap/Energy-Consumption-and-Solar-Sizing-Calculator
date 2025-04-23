@@ -348,6 +348,8 @@ body {
   width: 100%;
   height: auto;
   overflow: visible; /* Change from auto to visible */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .calculations-table.drag-over {
@@ -524,7 +526,9 @@ body {
   padding: 8px;
 }
 
-.calculations-table td, .config-item, .cost-input {
+.calculations-table td,
+.config-item,
+.cost-input {
   touch-action: none;
   overscroll-behavior: none;
   isolation: isolate;
@@ -653,6 +657,35 @@ input[type="text"] {
   }
   .products-filtered {
     height: 300px;
+  }
+
+  .calculations-table {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .calculations-table table {
+    min-width: max-content;
+    font-size: 0.85rem;
+  }
+
+  .calculations-table th,
+  .calculations-table td {
+    padding: 8px;
+    white-space: nowrap;
+  }
+
+  .calculations-table td input {
+    width: 60px;
+    font-size: 0.85rem;
+  }
+
+  .actions-cell {
+    position: sticky;
+    right: 0;
+    background: white;
+    box-shadow: -4px 0 6px rgba(0, 0, 0, 0.05);
+    z-index: 1;
   }
 }
 
