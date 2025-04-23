@@ -524,6 +524,12 @@ body {
   padding: 8px;
 }
 
+.calculations-table td, .config-item, .cost-input {
+  touch-action: none;
+  overscroll-behavior: none;
+  isolation: isolate;
+}
+
 /* Config section styling */
 .config-section {
   margin-top: 20px;
@@ -571,6 +577,42 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+  display: none;
+}
+
+/* Prevent scroll value changes but maintain focus */
+.input-scroll-prevention {
+  position: relative;
+  isolation: isolate;
+}
+
+.input-scroll-prevention input[type="number"] {
+  position: relative;
+  z-index: 1;
+}
+
+/* Prevent scroll on input containers */
+.input-scroll-prevention {
+  isolation: isolate;
+}
+
+.input-scroll-prevention input[type="number"] {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  pointer-events: auto;
+}
+
+.input-scroll-prevention input[type="number"]:focus {
+  pointer-events: auto;
+}
+
+/* Remove spinner controls from number inputs and prevent scroll wheel changes */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  touch-action: none;
+  touch-events: none;
+  overscroll-behavior: none;
 }
 
 /* Center all input values */
@@ -598,7 +640,7 @@ input[type="text"] {
 
   .app-container {
     width: 100%;
-    padding: 0 16px;
+    /* padding: 0 16px; */
   }
 
   .content-wrapper {
@@ -903,4 +945,14 @@ input[type="text"] {
   border-radius: 8px;
   margin: 20px 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input-scroll-prevention {
+  touch-action: none;
+  pointer-events: auto;
+  overscroll-behavior: none;
+}
+
+.input-scroll-prevention input {
+  pointer-events: auto;
 }

@@ -58,22 +58,6 @@ function App() {
   };
 
   useEffect(() => {
-    // Prevent wheel events from changing number input values globally
-    const preventWheel = (e: WheelEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" && target.getAttribute("type") === "number") {
-        e.preventDefault();
-      }
-    };
-
-    document.addEventListener("wheel", preventWheel, { passive: false });
-
-    return () => {
-      document.removeEventListener("wheel", preventWheel);
-    };
-  }, []);
-
-  useEffect(() => {
     fetch("/equipos.json")
       .then(response => response.json())
       .then(data => {
@@ -367,39 +351,45 @@ function App() {
                             </td>
                             <td>{equipo.nombre}</td>
                             <td>
-                              <input
-                                type="number"
-                                value={equipo.editedPotencia}
-                                onChange={e => handleFieldChange(index, "editedPotencia", e.target.value)}
-                                onClick={e => e.currentTarget.select()}
-                                onWheel={e => e.preventDefault()}
-                                min="0"
-                                step="0.1"
-                              />
+                              <div className="input-scroll-prevention">
+                                <input
+                                  type="number"
+                                  value={equipo.editedPotencia}
+                                  onChange={e => handleFieldChange(index, "editedPotencia", e.target.value)}
+                                  onClick={e => e.currentTarget.select()}
+                                  onWheel={e => e.stopPropagation()}
+                                  min="0"
+                                  step="0.1"
+                                />
+                              </div>
                             </td>
                             <td>
-                              <input
-                                type="number"
-                                value={equipo.cantidad}
-                                onChange={e => handleFieldChange(index, "cantidad", e.target.value)}
-                                onClick={e => e.currentTarget.select()}
-                                onWheel={e => e.preventDefault()}
-                                min="1"
-                                step="1"
-                              />
+                              <div className="input-scroll-prevention">
+                                <input
+                                  type="number"
+                                  value={equipo.cantidad}
+                                  onChange={e => handleFieldChange(index, "cantidad", e.target.value)}
+                                  onClick={e => e.currentTarget.select()}
+                                  onWheel={e => e.stopPropagation()}
+                                  min="1"
+                                  step="1"
+                                />
+                              </div>
                             </td>
                             <td>{potenciaTotal.toFixed(1)}</td>
                             <td>
-                              <input
-                                type="number"
-                                value={equipo.horas}
-                                onChange={e => handleFieldChange(index, "horas", e.target.value)}
-                                onClick={e => e.currentTarget.select()}
-                                onWheel={e => e.preventDefault()}
-                                min="0"
-                                max="24"
-                                step="0.5"
-                              />
+                              <div className="input-scroll-prevention">
+                                <input
+                                  type="number"
+                                  value={equipo.horas}
+                                  onChange={e => handleFieldChange(index, "horas", e.target.value)}
+                                  onClick={e => e.currentTarget.select()}
+                                  onWheel={e => e.stopPropagation()}
+                                  min="0"
+                                  max="24"
+                                  step="0.5"
+                                />
+                              </div>
                             </td>
                             <td>{energia.toFixed(1)}</td>
                           </tr>
@@ -434,7 +424,7 @@ function App() {
                         value={calcConfig.costoPorKwh}
                         onChange={e => handleConfigChange("costoPorKwh", e.target.value)}
                         onClick={e => e.currentTarget.select()}
-                        onWheel={e => e.preventDefault()}
+                        onWheel={e => e.stopPropagation()}
                         min="0"
                         step="0.01"
                       />
@@ -526,7 +516,7 @@ function App() {
                           value={calcConfig.factorSeguridad}
                           onChange={e => handleConfigChange("factorSeguridad", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="1"
                           step="0.1"
                         />
@@ -538,7 +528,7 @@ function App() {
                           value={calcConfig.voltajeNominalSistema}
                           onChange={e => handleConfigChange("voltajeNominalSistema", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="12"
                           step="12"
                         />
@@ -550,7 +540,7 @@ function App() {
                           value={calcConfig.eficienciaInversor}
                           onChange={e => handleConfigChange("eficienciaInversor", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="0"
                           max="1"
                           step="0.01"
@@ -563,7 +553,7 @@ function App() {
                           value={calcConfig.horasSolPico}
                           onChange={e => handleConfigChange("horasSolPico", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="0"
                           max="24"
                           step="0.1"
@@ -576,7 +566,7 @@ function App() {
                           value={calcConfig.voltajeNominalPanel}
                           onChange={e => handleConfigChange("voltajeNominalPanel", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="12"
                           step="12"
                         />
@@ -588,7 +578,7 @@ function App() {
                           value={calcConfig.corrienteNominalPanel}
                           onChange={e => handleConfigChange("corrienteNominalPanel", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="0"
                           step="0.1"
                         />
@@ -674,7 +664,7 @@ function App() {
                           value={calcConfig.diasAutonomia}
                           onChange={e => handleConfigChange("diasAutonomia", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="1"
                           step="1"
                         />
@@ -686,7 +676,7 @@ function App() {
                           value={calcConfig.profundidadDescarga}
                           onChange={e => handleConfigChange("profundidadDescarga", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="0"
                           max="1"
                           step="0.05"
@@ -699,7 +689,7 @@ function App() {
                           value={calcConfig.capacidadBateria}
                           onChange={e => handleConfigChange("capacidadBateria", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="0"
                           step="1"
                         />
@@ -711,7 +701,7 @@ function App() {
                           value={calcConfig.voltajeBateria}
                           onChange={e => handleConfigChange("voltajeBateria", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="0"
                           step="12"
                         />
@@ -780,7 +770,7 @@ function App() {
                           value={calcConfig.corrienteCortocircuito}
                           onChange={e => handleConfigChange("corrienteCortocircuito", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.preventDefault()}
+                          onWheel={e => e.stopPropagation()}
                           min="0"
                           step="0.1"
                         />
