@@ -199,8 +199,8 @@ function App() {
   );
 
   const handleFieldChange = useCallback((index: number, field: keyof SelectedEquipo, value: string) => {
-    const numValue = parseFloat(value) || 0;
-    if (numValue < 0) return; // Prevent negative values
+    const numValue = value === "" ? "" : parseFloat(value);
+    if (typeof numValue === "number" && numValue < 0) return; // Prevent negative values
 
     setSelectedEquipos(prev => {
       const newEquipos = [...prev];
@@ -235,8 +235,8 @@ function App() {
   );
 
   const handleConfigChange = useCallback((field: string, value: string) => {
-    const numValue = parseFloat(value) || 0;
-    if (numValue < 0) return; // Prevent negative values
+    const numValue = value === "" ? "" : parseFloat(value);
+    if (typeof numValue === "number" && numValue < 0) return; // Prevent negative values
 
     setCalcConfig(prev => ({
       ...prev,
