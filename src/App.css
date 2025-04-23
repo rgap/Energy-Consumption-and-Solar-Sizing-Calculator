@@ -47,7 +47,7 @@ body {
 
 .title-section {
   width: 100%;
-  padding: 1.5rem;
+  padding: 0.8rem;
   text-align: center;
 }
 
@@ -138,7 +138,7 @@ body {
   border-radius: 8px;
   padding: 16px;
   overflow: hidden;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 225px);
 }
 
 .product-list {
@@ -618,6 +618,10 @@ input[type="text"] {
 
 /* Responsive improvements */
 @media (max-width: 1280px) {
+  .drag-handle {
+    display: none;
+  }
+
   .title-section {
     padding: 0.5rem;
   }
@@ -731,11 +735,13 @@ input[type="text"] {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  align-items: center;
 }
 
 .config-item label {
   font-weight: 600;
   color: #333;
+  text-align: center;
 }
 
 .config-item input {
@@ -772,11 +778,13 @@ input[type="text"] {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  align-items: center;
 }
 
 .result-item label {
   font-weight: 500;
   color: #666;
+  text-align: center;
 }
 
 .result-item span {

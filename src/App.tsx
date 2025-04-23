@@ -522,7 +522,7 @@ function App() {
                         />
                       </div>
                       <div className="config-item">
-                        <label>Voltaje Nominal del Sistema (V):</label>
+                        <label>Voltaje Nominal Sistema (V):</label>
                         <input
                           type="number"
                           value={calcConfig.voltajeNominalSistema}
