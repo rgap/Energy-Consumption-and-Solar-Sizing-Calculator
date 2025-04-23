@@ -561,16 +561,16 @@ body {
   outline: none;
 }
 
-/* Remove spinner controls from number inputs */
+/* Remove spinner controls from number inputs and prevent scroll wheel changes */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
 }
 
 /* Responsive improvements */
