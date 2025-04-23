@@ -636,6 +636,10 @@ input[type="text"] {
     padding: 10px;
   }
 
+  .products-filtered {
+    height: 325px;
+  }
+
   .products-filtered,
   .right-panel {
     width: 100%;
@@ -922,14 +926,6 @@ input[type="text"] {
   margin-bottom: 8px;
   content: "";
   display: block;
-}
-
-.results-section {
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 8px;
-  margin-top: 20px;
-  border: 1px solid #e2e8f0;
 }
 
 .results-section h4 {
