@@ -19,7 +19,8 @@ body {
 }
 
 .app-container {
-  width: 1280px;
+  width: 100%;
+  min-width: 375px;
   min-height: 100vh;
   background-color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -173,7 +174,7 @@ body {
   padding: 20px 12px 12px 12px;
   cursor: default;
   position: relative;
-  min-width: 210px;
+  min-width: 375px;
 }
 
 .selected-equipment-item.drag-over {
@@ -575,24 +576,8 @@ body {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-  display: none;
-}
-
-/* Prevent scroll value changes but maintain focus */
-.input-scroll-prevention {
-  position: relative;
-  isolation: isolate;
-}
-
-.input-scroll-prevention input[type="number"] {
-  position: relative;
-  z-index: 1;
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 /* Prevent scroll on input containers */
@@ -615,7 +600,6 @@ input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
   touch-action: none;
-  touch-events: none;
   overscroll-behavior: none;
 }
 
@@ -639,24 +623,28 @@ input[type="text"] {
   }
 
   .title-section h1 {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .app-container {
     width: 100%;
-    /* padding: 0 16px; */
+    padding: 0;
   }
 
   .content-wrapper {
     flex-direction: column;
+    padding: 10px;
   }
 
   .products-filtered,
   .right-panel {
     width: 100%;
+    min-width: 375px;
   }
-  .products-filtered {
-    height: 300px;
+
+  .selected-equipment-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .calculations-table {
