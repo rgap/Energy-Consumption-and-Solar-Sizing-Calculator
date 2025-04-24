@@ -244,6 +244,28 @@ function App() {
     }));
   }, []);
 
+  // Single useEffect for handling wheel events
+  useEffect(() => {
+    const preventScroll = (e: WheelEvent) => {
+      if (e.target instanceof HTMLElement && e.target.matches('input[type="number"]')) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    // Add event listener with capture phase to ensure it runs first
+    window.addEventListener('wheel', preventScroll, { passive: false, capture: true });
+
+    return () => {
+      window.removeEventListener('wheel', preventScroll, { capture: true });
+    };
+  }, []);
+
+  // Simple React wheel handler
+  const handleWheel = useCallback((e: React.WheelEvent<HTMLInputElement>) => {
+    e.preventDefault();
+  }, []);
+
   // Calculate totals
   const totals = {
     potenciaTotal: selectedEquipos.reduce((sum, equipo) => sum + equipo.editedPotencia * equipo.cantidad, 0),
@@ -357,7 +379,7 @@ function App() {
                                   value={equipo.editedPotencia}
                                   onChange={e => handleFieldChange(index, "editedPotencia", e.target.value)}
                                   onClick={e => e.currentTarget.select()}
-                                  onWheel={e => e.stopPropagation()}
+                                  onWheel={handleWheel}
                                   min="0"
                                   step="0.1"
                                 />
@@ -370,7 +392,7 @@ function App() {
                                   value={equipo.cantidad}
                                   onChange={e => handleFieldChange(index, "cantidad", e.target.value)}
                                   onClick={e => e.currentTarget.select()}
-                                  onWheel={e => e.stopPropagation()}
+                                  onWheel={handleWheel}
                                   min="1"
                                   step="1"
                                 />
@@ -384,7 +406,7 @@ function App() {
                                   value={equipo.horas}
                                   onChange={e => handleFieldChange(index, "horas", e.target.value)}
                                   onClick={e => e.currentTarget.select()}
-                                  onWheel={e => e.stopPropagation()}
+                                  onWheel={handleWheel}
                                   min="0"
                                   max="24"
                                   step="0.5"
@@ -424,7 +446,7 @@ function App() {
                         value={calcConfig.costoPorKwh}
                         onChange={e => handleConfigChange("costoPorKwh", e.target.value)}
                         onClick={e => e.currentTarget.select()}
-                        onWheel={e => e.stopPropagation()}
+                        onWheel={handleWheel}
                         min="0"
                         step="0.01"
                       />
@@ -516,7 +538,7 @@ function App() {
                           value={calcConfig.factorSeguridad}
                           onChange={e => handleConfigChange("factorSeguridad", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="1"
                           step="0.1"
                         />
@@ -528,7 +550,7 @@ function App() {
                           value={calcConfig.voltajeNominalSistema}
                           onChange={e => handleConfigChange("voltajeNominalSistema", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="12"
                           step="12"
                         />
@@ -540,7 +562,7 @@ function App() {
                           value={calcConfig.eficienciaInversor}
                           onChange={e => handleConfigChange("eficienciaInversor", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="0"
                           max="1"
                           step="0.01"
@@ -553,7 +575,7 @@ function App() {
                           value={calcConfig.horasSolPico}
                           onChange={e => handleConfigChange("horasSolPico", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="0"
                           max="24"
                           step="0.1"
@@ -566,7 +588,7 @@ function App() {
                           value={calcConfig.voltajeNominalPanel}
                           onChange={e => handleConfigChange("voltajeNominalPanel", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="12"
                           step="12"
                         />
@@ -578,7 +600,7 @@ function App() {
                           value={calcConfig.corrienteNominalPanel}
                           onChange={e => handleConfigChange("corrienteNominalPanel", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="0"
                           step="0.1"
                         />
@@ -664,7 +686,7 @@ function App() {
                           value={calcConfig.diasAutonomia}
                           onChange={e => handleConfigChange("diasAutonomia", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="1"
                           step="1"
                         />
@@ -676,7 +698,7 @@ function App() {
                           value={calcConfig.profundidadDescarga}
                           onChange={e => handleConfigChange("profundidadDescarga", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="0"
                           max="1"
                           step="0.05"
@@ -689,7 +711,7 @@ function App() {
                           value={calcConfig.capacidadBateria}
                           onChange={e => handleConfigChange("capacidadBateria", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="0"
                           step="1"
                         />
@@ -701,7 +723,7 @@ function App() {
                           value={calcConfig.voltajeBateria}
                           onChange={e => handleConfigChange("voltajeBateria", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="0"
                           step="12"
                         />
@@ -770,7 +792,7 @@ function App() {
                           value={calcConfig.corrienteCortocircuito}
                           onChange={e => handleConfigChange("corrienteCortocircuito", e.target.value)}
                           onClick={e => e.currentTarget.select()}
-                          onWheel={e => e.stopPropagation()}
+                          onWheel={handleWheel}
                           min="0"
                           step="0.1"
                         />

@@ -572,6 +572,39 @@ body {
   outline: none;
 }
 
+/* Prevent number input spinners and wheel changes */
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+.calculations-table td input,
+.config-item input,
+.cost-input input {
+  /* Existing styles */
+  width: 70px;
+  padding: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+/* Additional specific prevention */
+.input-scroll-prevention {
+  touch-action: none;
+}
+
+.input-scroll-prevention input {
+  pointer-events: initial !important;
+}
+
 /* Remove spinner controls from number inputs and prevent scroll wheel changes */
 input[type="number"] {
   -moz-appearance: textfield;
@@ -980,4 +1013,32 @@ input[type="text"] {
 
 .input-scroll-prevention input {
   pointer-events: auto;
+}
+
+/* Remove spinner controls and prevent scroll wheel changes */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.calculations-table td input,
+.config-item input,
+.cost-input input {
+  width: 70px;
+  padding: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+/* Prevent scroll with CSS */
+input {
+  overflow: hidden;
 }
